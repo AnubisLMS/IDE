@@ -19,23 +19,28 @@ help:
 	@echo 'Available make targets:'
 	@grep PHONY: Makefile | cut -d: -f2 | sed '1d;s/^/make/'
 
+.PHONY: context         # Grab kubectl and registry login from doctl
+context:
+	doctl kubernetes cluster kubeconfig save anubis --context anubis
+	doctl registry login --context anubis
+
 .PHONY: build-base-ides # Build base ide images
 build-base-ides:
 	@echo 'building base images'
-	docker-compose build --parallel --pull $(THEIA_BASE_IDE)
+	docker compose build --parallel --pull $(THEIA_BASE_IDE)
 
 .PHONY: build-ides      # Build all ide docker images
 build-ides:
 	@echo 'building ide image'
-	docker-compose build --parallel $(THEIA_IDES)
+	docker compose build --parallel $(THEIA_IDES)
 
 .PHONY: push-base-ides  # Push base ide images to registry.digitalocean.com
 push-base-ides:
-	docker-compose push $(THEIA_BASE_IDE)
+	docker compose push $(THEIA_BASE_IDE)
 
 .PHONY: push-ides       # Push ide images to registry.digitalocean.com
 push-ides:
-	docker-compose push $(THEIA_IDES)
+	docker compose push $(THEIA_IDES)
 
 .PHONY: prop-ides       # Create theia-prop daemonset to propagate latest ide images
 prop-ides:

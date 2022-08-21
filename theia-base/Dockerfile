@@ -130,9 +130,10 @@ COPY zshrc /etc/anubis/skel/.zshrc
 COPY anubis.zsh-theme /opt/oh-my-zsh/custom/themes/anubis.zsh-theme
 
 # Anubis CLI
-COPY cli /cli
-RUN pip3 install --no-cache-dir /cli \
-  && rm -rf /cli
+RUN set -eux; \
+  git clone https://github.com/AnubisLMS/AnubisCLI.git /cli; \
+  pip3 install --no-cache-dir /cli; \
+  rm -rf /cli
 
 COPY motd.txt /etc/motd
 COPY supervisord.conf initialize-ide.py /

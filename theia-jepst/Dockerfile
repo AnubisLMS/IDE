@@ -21,8 +21,16 @@ RUN set -ex; \
     \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
     -exec 'rm' '-rf' '{}' '+';
 
+ENV GO_VERSION=1.19 \
+  GOOS=linux \
+  GOARCH=amd64 \
+  GOROOT=/opt/go \
+  GOPATH=/opt/go-tools
+ENV PATH=$GOROOT/bin:$GOPATH/bin:$PATH
+
 # Install extra tools
 RUN set -ex; \
+  `# Prolog, verilog, nasm` \
   apt-get update; \
   apt-get install -y --no-install-recommends \
     gdb \
@@ -32,13 +40,39 @@ RUN set -ex; \
     nasm \
     hexedit \
     yosys \
-    unzip \
-    elixir; \
+    unzip; \
+  \
+  `# Haskell` \
   wget https://github.com/haskell/haskell-language-server/releases/download/1.5.1/haskell-language-server-Linux-9.0.1.gz; \
   gzip -d haskell-language-server-Linux-9.0.1.gz; \
   chmod +x haskell-language-server-Linux-9.0.1; \
   mv haskell-language-server-Linux-9.0.1 /usr/local/bin/haskell-language-server; \
-  rm -rf /var/lib/apt/lists/*;
+  rm -rf /var/lib/apt/lists/*; \
+  \
+  `# erlang / elixer` \
+  wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb; \
+  dpkg -i erlang-solutions_2.0_all.deb;\
+  apt-get update && apt-get install -y --no-install-recommends esl-erlang elixir; \
+  \
+  `# golang` \
+  cd /home/anubis; \
+  mkdir -p $GOROOT; \
+  mkdir -p $GOPATH; \
+  chown -R anubis:anubis $GOROOT; \
+  curl -fsSL https://storage.googleapis.com/golang/go$GO_VERSION.$GOOS-$GOARCH.tar.gz | tar -C $(dirname $GOROOT) -xzv; \
+  cd /home/anubis; \
+  go install github.com/uudashr/gopkgs/cmd/gopkgs@v2; \
+	go install github.com/ramya-rao-a/go-outline@latest; \
+	go install github.com/cweill/gotests/gotests@latest; \
+	go install github.com/fatih/gomodifytags@latest; \
+	go install github.com/josharian/impl@latest; \
+	go install github.com/haya14busa/goplay/cmd/goplay@latest; \
+	go install github.com/go-delve/delve/cmd/dlv@latest; \
+  go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
+	go install golang.org/x/tools/gopls@v0.7.3; \
+  echo 'export GO111MODULE=on' >> .bashrc; \
+  sed -i 's/"default": "goreturns"/"default": "goformat"/' \
+    /opt/theia/plugins/vscode-go/extension/package.json
 
 # Compile and install glibc 2.32 from source
 RUN set -ex; \

@@ -5,7 +5,7 @@ services:
   theia-base-38:
     image: registry.digitalocean.com/anubis/theia-base:python-3.8
     build:
-      context: ./theia/ide/theia-base
+      context: ./theia-base
       args:
         PY_VERSION: '3.8.12'
         BUILD_THEIA: 'ON'
@@ -13,7 +13,7 @@ services:
   theia-base-39:
     image: registry.digitalocean.com/anubis/theia-base:python-3.9
     build:
-      context: ./theia/ide/theia-base
+      context: ./theia-base
       args:
         PY_VERSION: '3.9.10'
         BUILD_THEIA: 'ON'
@@ -21,7 +21,7 @@ services:
   theia-base-310:
     image: registry.digitalocean.com/anubis/theia-base:python-3.10
     build:
-      context: ./theia/ide/theia-base
+      context: ./theia-base
       args:
         PY_VERSION: '3.10.2'
         BUILD_THEIA: 'ON'
@@ -29,7 +29,7 @@ services:
   theia-base-38-bare:
     image: registry.digitalocean.com/anubis/theia-base:python-3.8-bare
     build:
-      context: ./theia/ide/theia-base
+      context: ./theia-base
       args:
         PY_VERSION: '3.8.12'
         BUILD_THEIA: 'OFF'
@@ -37,7 +37,7 @@ services:
   theia-base-39-bare:
     image: registry.digitalocean.com/anubis/theia-base:python-3.9-bare
     build:
-      context: ./theia/ide/theia-base
+      context: ./theia-base
       args:
         PY_VERSION: '3.9.10'
         BUILD_THEIA: 'OFF'
@@ -45,7 +45,7 @@ services:
   theia-base-310-bare:
     image: registry.digitalocean.com/anubis/theia-base:python-3.10-bare
     build:
-      context: ./theia/ide/theia-base
+      context: ./theia-base
       args:
         PY_VERSION: '3.10.2'
         BUILD_THEIA: 'OFF'
@@ -53,53 +53,53 @@ services:
   webtop-base-ubuntu:
     image: registry.digitalocean.com/anubis/webtop-base:ubuntu
     build:
-      context: ./theia/ide/webtop-base
+      context: ./webtop-base
       args: {}
 
   theia-golang:
     image: registry.digitalocean.com/anubis/theia-golang:latest
-    build: ./theia/ide/theia-golang
+    build: ./theia-golang
 
   theia-xv6:
     image: registry.digitalocean.com/anubis/theia-xv6:latest
-    build: ./theia/ide/theia-xv6
+    build: ./theia-xv6
 
   theia-admin:
     image: registry.digitalocean.com/anubis/theia-admin:latest
-    build: ./theia/ide/theia-admin
+    build: ./theia-admin
 
   theia-devops:
     image: registry.digitalocean.com/anubis/theia-devops:latest
-    build: ./theia/ide/theia-devops
+    build: ./theia-devops
 
   theia-flask-39:
     image: registry.digitalocean.com/anubis/theia-flask:python-3.9
     build:
-      context: ./theia/ide/theia-flask
+      context: ./theia-flask
       args:
         PY_VERSION: '3.9'
 
   theia-flask-310:
     image: registry.digitalocean.com/anubis/theia-flask:python-3.10
     build:
-      context: ./theia/ide/theia-flask
+      context: ./theia-flask
       args:
         PY_VERSION: '3.10'
 
   theia-mysql-39:
     image: registry.digitalocean.com/anubis/theia-mysql:python-3.9
     build:
-      context: ./theia/ide/theia-mysql
+      context: ./theia-mysql
       args:
         PY_VERSION: '3.9'
 
   theia-mysql-310:
     image: registry.digitalocean.com/anubis/theia-mysql:python-3.10
     build:
-      context: ./theia/ide/theia-mysql
+      context: ./theia-mysql
       args:
         PY_VERSION: '3.10'
 
   theia-jepst:
     image: registry.digitalocean.com/anubis/theia-jepst:latest
-    build: ./theia/ide/theia-jepst
+    build: ./theia-jepst

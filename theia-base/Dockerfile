@@ -37,7 +37,7 @@ RUN set -ex; \
     libffi-dev libexpat1-dev \
     libgdbm-dev liblzma-dev zlib1g-dev \
     libsqlite3-dev libssl-dev openssl \
-    libsecret-1-0 sqlite3 libbz2-dev bzip2; \
+    libsecret-1-0 sqlite3 libbz2-dev bzip2 fzf; \
   apt remove -y python python-pip python3-pip python3; \
   cd /; \
   echo 'LANG=en_US.UTF-8' > /etc/locale.conf; \
@@ -125,7 +125,9 @@ RUN set -ex; \
   mkdir -p /etc/anubis/init.d/; \
   chsh -s /usr/bin/zsh anubis; \
   git clone https://github.com/robbyrussell/oh-my-zsh.git /opt/oh-my-zsh; \
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git /opt/oh-my-zsh/custom/plugins/zsh-syntax-highlighting;
+  git clone https://github.com/Aloxaf/fzf-tab.git /opt/oh-my-zsh/custom/plugins/fzf-tab; \
+  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git /opt/oh-my-zsh/custom/plugins/zsh-syntax-highlighting; \
+  git clone https://github.com/zsh-users/zsh-autosuggestions.git /opt/oh-my-zsh/custom/plugins/zsh-autosuggestions;
 COPY zshrc /etc/anubis/skel/.zshrc
 COPY anubis.zsh-theme /opt/oh-my-zsh/custom/themes/anubis.zsh-theme
 

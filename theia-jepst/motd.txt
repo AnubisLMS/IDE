@@ -1,14 +1,16 @@
-    _                _     _
+[01;32m    _                _     _
    / \   _ __  _   _| |__ (_)___
   / _ \ | '_ \| | | | '_ \| / __|
  / ___ \| | | | |_| | |_) | \__ \
 /_/   \_|_| |_|\__,_|_.__/|_|___/
-
-- When you've finished, be sure to end
-  the Anubis session.
-- Your work will be saved automatically.
-- You can upload files by clicking the
+[00m
+[01;31m-[00m [01;34mTry using [01;32ml[00m[01;34m instead of [01;31mls[00m[01;34m for prettier
+  file listing.[00m
+[01;31m-[00m [01;34mWhen you've finished, be sure to end
+  the Anubis session.[00m
+[01;31m-[00m [01;34mYour work will be saved automatically.
+[01;31m-[00m [01;34mYou can upload files by clicking the
   Explorer and dragging files from
-  your desktop to the IDE.
-- You can download files by selecting
-  Download from the file menu.
+  your desktop to the IDE.[00m
+[01;31m-[00m [01;34mYou can download files by selecting
+  Download from the file menu.[00m

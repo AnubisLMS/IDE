@@ -1,10 +1,6 @@
 FROM registry.digitalocean.com/anubis/theia-base:python-3.9-bare as theia
 USER root
 
-# Copy file over for skel initialization
-COPY gdbinit /etc/anubis/skel/.gdbinit
-COPY motd.txt /etc/motd
-
 # Step for downloading any new extensions
 COPY latest.package.json package.json
 RUN set -ex; \
@@ -47,14 +43,22 @@ RUN set -ex; \
   gzip -d haskell-language-server-Linux-9.0.1.gz; \
   chmod +x haskell-language-server-Linux-9.0.1; \
   mv haskell-language-server-Linux-9.0.1 /usr/local/bin/haskell-language-server; \
-  rm -rf /var/lib/apt/lists/*; \
   \
   `# erlang / elixer` \
   wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb; \
   dpkg -i erlang-solutions_2.0_all.deb;\
-  apt-get update && apt-get install -y --no-install-recommends esl-erlang elixir; \
-  \
-  `# golang` \
+  apt-get update; \
+  apt-get install -y --no-install-recommends esl-erlang elixir; \
+  rm -rf /tmp/*; \
+  rm -rf /usr/share/doc; \
+  rm -rf /var/cache/apt/*; \
+  rm -rf /var/lib/apt/lists/*; \
+  find / -depth \
+    \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
+    -exec 'rm' '-rf' '{}' '+';
+
+# Golang can be installed as anubis user
+RUN set -eux; \
   cd /home/anubis; \
   mkdir -p $GOROOT; \
   mkdir -p $GOPATH; \
@@ -72,8 +76,16 @@ RUN set -ex; \
 	go install golang.org/x/tools/gopls@v0.7.3; \
   echo 'export GO111MODULE=on' >> .bashrc; \
   sed -i 's/"default": "goreturns"/"default": "goformat"/' \
-    /opt/theia/plugins/vscode-go/extension/package.json
+    /opt/theia/plugins/vscode-go/extension/package.json; \
+  rm -rf /tmp/*; \
+  rm -rf /usr/share/doc; \
+  rm -rf /var/cache/apt/*; \
+  rm -rf /var/lib/apt/lists/*; \
+  find / -depth \
+    \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
+    -exec 'rm' '-rf' '{}' '+';
 
+USER root
 # Compile and install glibc 2.32 from source
 RUN set -ex; \
   cd /; \
@@ -83,6 +95,18 @@ RUN set -ex; \
   wget https://snapshot.debian.org/archive/debian/20211205T084953Z/pool/main/g/glibc/libc-l10n_2.32-4_all.deb; \
   dpkg --install libc-l10n_2.32-4_all.deb libc-bin_2.32-4_amd64.deb locales_2.32-4_all.deb libc6_2.32-4_amd64.deb; \
   rm *.deb; \
-  ldconfig
+  ldconfig; \
+  rm -rf /tmp/*; \
+  rm -rf /usr/share/doc; \
+  rm -rf /var/cache/apt/*; \
+  rm -rf /var/lib/apt/lists/*; \
+  find / -depth \
+    \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
+    -exec 'rm' '-rf' '{}' '+'; \
+  chown -R anubis:anubis /home/anubis;
+
+# Copy file over for skel initialization
+COPY gdbinit /etc/anubis/skel/.gdbinit
+COPY motd.txt /etc/motd
 
 USER anubis

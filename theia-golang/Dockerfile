@@ -26,6 +26,7 @@ ENV GO_VERSION=1.19 \
   GOPATH=/opt/go-tools
 ENV PATH=$GOROOT/bin:$GOPATH/bin:$PATH
 
+USER anubis
 RUN set -ex; \
   cd /home/anubis; \
   mkdir -p $GOROOT; \
@@ -45,6 +46,7 @@ RUN set -ex; \
   echo 'export GO111MODULE=on' >> .bashrc; \
   sed -i 's/"default": "goreturns"/"default": "goformat"/' \
     /opt/theia/plugins/vscode-go/extension/package.json
+USER root
 
 COPY supervisord.conf /supervisord.conf
 USER anubis

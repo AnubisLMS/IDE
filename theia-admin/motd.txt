@@ -1,15 +1,15 @@
-    _                _     _
+[01;32m    _                _     _
    / \   _ __  _   _| |__ (_)___
   / _ \ | '_ \| | | | '_ \| / __|
  / ___ \| | | | |_| | |_) | \__ \
 /_/   \_|_| |_|\__,_|_.__/|_|___/
-
-- Remember, this Cloud IDE server is temporary!
+[00m
+[01;31m-[00m [01;34mRemember, this Cloud IDE server is temporary!
   Make sure that your work is getting pushed to
   github. When the session is ended, everything
-  (including your work) will be deleted.
-- If you did not disable autosave, then every 5
-  minutes your work will be pushed to github.
-- Use the autosave command to manually trigger
-  an autosave.
-- Try out the anubis cli! Type: anubis --help
+  (including your work) will be deleted.[00m
+[01;32m-[00m [01;34mIf you did not disable autosave, then every 5
+  minutes your work will be pushed to github.[00m
+[01;32m-[00m [01;34mUse the autosave command to manually trigger
+  an autosave:[00m [01;37m%[00m [01;32manubis autosave[00m
+[01;32m-[00m [01;34mTry out the anubis cli: [01;37m%[00m [01;32manubis --help[00m

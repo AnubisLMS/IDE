@@ -8,4 +8,4 @@
 - Try using l instead of ls for prettier
   file listing.
 - Try the autosave command to manually
-  trigger an autosave: $ anubis autosave
+  trigger an autosave: % anubis autosave

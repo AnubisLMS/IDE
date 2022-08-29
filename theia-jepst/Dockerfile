@@ -1,3 +1,4 @@
+ARG PY_VERSION=3.10
 ARG BASE_IMAGE=registry.digitalocean.com/anubis/theia-base:python-${PY_VERSION}-bare
 
 FROM ${BASE_IMAGE} as theia

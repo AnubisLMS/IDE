@@ -4,9 +4,9 @@ export GIT_TAG
 
 # Theia IDES
 THEIA_BASE_IDE := \
-	theia-base-38 theia-base-39 theia-base-310 theia-base-311 \
-	theia-base-38-bare theia-base-39-bare theia-base-310-bare theia-base-311-bare \
-	webtop-base-38 webtop-base-39 webtop-base-310 webtop-base-311
+	theia-base-38 theia-base-39 theia-base-310 \
+	theia-base-38-bare theia-base-39-bare theia-base-310-bare \
+	webtop-base-38 webtop-base-39 webtop-base-310
 
 THEIA_IDES := \
 	theia-xv6 theia-admin theia-golang \

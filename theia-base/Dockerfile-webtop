@@ -4,9 +4,10 @@ ARG TAG=ubuntu-xfce
 ARG BASE_IMAGE=lscr.io/linuxserver/webtop
 FROM $BASE_IMAGE:$TAG
 
-ARG USER=abc
 ARG DIST=focal
 ENV TZ=America/New_York \
+    USER=anubis \
+    CUSTOM_USER=anubis \
     PUID=1001 \
     GUID=1001 \
     KEYBOARD=en-us-qwerty \
@@ -15,6 +16,9 @@ ENV TZ=America/New_York \
 
 # Webtop setup
 RUN set -eux; \
+  SCRIPT_LINE='<script>function ping(){if (document.hasFocus()){fetch("/ide/ping")}};document.addEventListener("focus",ping);setInterval(ping,60000)</script>'; \
+  HEAD_LINE_NUMBER=$(grep -n '</head>' /gclient/rdp.ejs | cut -f1 -d:); \
+  sed -i "${HEAD_LINE_NUMBER}i${SCRIPT_LINE}" /gclient/rdp.ejs; \
   apt-get update; \
   apt-get install git wget build-essential -y --no-install-recommends; \
   mkdir -p /home/anubis; \
@@ -30,7 +34,11 @@ RUN set -eux; \
   rm -rf /var/lib/apt/lists/*; \
   rm -rf /defaults/*; \
   cd /etc/cont-init.d/; \
-  rm -f 90-custom-folders 99-custom-scripts 30-config;
+  rm -f 90-custom-folders 99-custom-scripts 30-config; \
+  sed -i 's/sudo:x:27:anubis/sudo:x:27:/' /etc/group; \
+  rm /usr/share/applications/code.desktop; \
+  set +eu; \
+  find /etc -type f -exec 'sed' '-i' 's/abc/anubis/g' '{}' ';';
 
 ARG PY_VERSION=3.10.6
 ENV PY_VERSION=$PY_VERSION \
@@ -43,6 +51,7 @@ ENV PY_VERSION=$PY_VERSION \
     ANUBIS=1 \
     ANUBIS_IDE=1 \
     ANUBIS_ASSIGNMENT_NAME="" \
+    ANUBIS_WEBTOP=OFF \
     HOME=/home/anubis \
     SHELL=/usr/bin/zsh \
     THEIA_DEFAULT_PLUGINS="local-dir:/opt/theia/plugins/" \

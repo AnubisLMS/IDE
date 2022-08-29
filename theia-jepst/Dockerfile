@@ -1,21 +1,29 @@
-FROM registry.digitalocean.com/anubis/theia-base:python-3.9-bare as theia
+ARG BASE_IMAGE=registry.digitalocean.com/anubis/theia-base:python-${PY_VERSION}-bare
+
+FROM ${BASE_IMAGE} as theia
 USER root
+
+ARG USER=anubis
+ARG WEBTOP=OFF
 
 # Step for downloading any new extensions
 COPY latest.package.json package.json
 RUN set -ex; \
-  yarn --pure-lockfile; \
-  NODE_OPTIONS="--max-old-space-size=4096" yarn theia build; \
-  HEAD_LINE_NUMBER=$(grep -n '</head>' lib/index.html | cut -f1 -d:); \
-  SCRIPT_LINE='<script>function ping(){if (document.hasFocus()){fetch("/ide/ping")}};document.addEventListener("focus",ping);setInterval(ping,60000)</script>'; \
-  sed -i "${HEAD_LINE_NUMBER}i${SCRIPT_LINE}" lib/index.html; \
-  yarn theia download:plugins; \
-  yarn --production; \
-  yarn autoclean --force; \
-  yarn cache clean; \
-  find / -depth \
-    \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
-    -exec 'rm' '-rf' '{}' '+';
+  if [ "${WEBTOP}" = "OFF" ]; then yarn --pure-lockfile; \
+    NODE_OPTIONS="--max-old-space-size=4096" yarn theia build; \
+    HEAD_LINE_NUMBER=$(grep -n '</head>' lib/index.html | cut -f1 -d:); \
+    SCRIPT_LINE='<script>function ping(){if (document.hasFocus()){fetch("/ide/ping")}};document.addEventListener("focus",ping);setInterval(ping,60000)</script>'; \
+    sed -i "${HEAD_LINE_NUMBER}i${SCRIPT_LINE}" lib/index.html; \
+    yarn theia download:plugins; \
+    yarn --production; \
+    yarn autoclean --force; \
+    yarn cache clean; \
+    find / -depth \
+      \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
+      -exec 'rm' '-rf' '{}' '+'; \
+  else \
+    rm package.json; \
+  fi
 
 ENV GO_VERSION=1.19 \
   GOOS=linux \
@@ -25,7 +33,7 @@ ENV GO_VERSION=1.19 \
 ENV PATH=$GOROOT/bin:$GOPATH/bin:$PATH
 
 # Install extra tools
-RUN set -ex; \
+RUN set -eux; \
   `# Prolog, verilog, nasm` \
   apt-get update; \
   apt-get install -y --no-install-recommends \
@@ -38,6 +46,7 @@ RUN set -ex; \
     yosys \
     unzip; \
   \
+  if [ "$WEBTOP" = "ON" ]; then apt-get install -y --no-install-recommends gtkwave; fi; \
   `# Haskell` \
   wget https://github.com/haskell/haskell-language-server/releases/download/1.5.1/haskell-language-server-Linux-9.0.1.gz; \
   gzip -d haskell-language-server-Linux-9.0.1.gz; \
@@ -62,7 +71,7 @@ RUN set -eux; \
   cd /home/anubis; \
   mkdir -p $GOROOT; \
   mkdir -p $GOPATH; \
-  chown -R anubis:anubis $GOROOT; \
+  chown -R ${USER}:${USER} $GOROOT; \
   curl -fsSL https://storage.googleapis.com/golang/go$GO_VERSION.$GOOS-$GOARCH.tar.gz | tar -C $(dirname $GOROOT) -xzv; \
   cd /home/anubis; \
   go install github.com/uudashr/gopkgs/cmd/gopkgs@v2; \
@@ -75,15 +84,17 @@ RUN set -eux; \
   go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
 	go install golang.org/x/tools/gopls@v0.7.3; \
   echo 'export GO111MODULE=on' >> .bashrc; \
-  sed -i 's/"default": "goreturns"/"default": "goformat"/' \
-    /opt/theia/plugins/vscode-go/extension/package.json; \
   rm -rf /tmp/*; \
   rm -rf /usr/share/doc; \
   rm -rf /var/cache/apt/*; \
   rm -rf /var/lib/apt/lists/*; \
   find / -depth \
     \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
-    -exec 'rm' '-rf' '{}' '+';
+    -exec 'rm' '-rf' '{}' '+'; \
+  if [ "${WEBTOP}" = "OFF" ]; then  \
+    sed -i 's/"default": "goreturns"/"default": "goformat"/' \
+      /opt/theia/plugins/vscode-go/extension/package.json;  \
+  fi
 
 USER root
 # Compile and install glibc 2.32 from source
@@ -103,10 +114,10 @@ RUN set -ex; \
   find / -depth \
     \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
     -exec 'rm' '-rf' '{}' '+'; \
-  chown -R anubis:anubis /home/anubis;
+  chown -R ${USER}:${USER} /home/anubis;
 
 # Copy file over for skel initialization
 COPY gdbinit /etc/anubis/skel/.gdbinit
 COPY motd.txt /etc/motd
 
-USER anubis
+USER ${USER}

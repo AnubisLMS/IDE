@@ -3,7 +3,6 @@
 ARG NODE_VERSION=12.22.6
 FROM node:${NODE_VERSION}-bullseye-slim as base
 
-ARG USER=anubis
 ARG DIST=bullseye
 ENV TZ=America/New_York \
     PUID=1001 \
@@ -22,6 +21,7 @@ ENV PY_VERSION=$PY_VERSION \
     ANUBIS=1 \
     ANUBIS_IDE=1 \
     ANUBIS_ASSIGNMENT_NAME="" \
+    ANUBIS_WEBTOP=OFF \
     HOME=/home/anubis \
     SHELL=/usr/bin/zsh \
     THEIA_DEFAULT_PLUGINS="local-dir:/opt/theia/plugins/" \
@@ -104,27 +104,29 @@ RUN set -ex; \
 # Build Theia Application
 ARG BUILD_THEIA=ON
 COPY latest.package.json package.json
-RUN if [ "${BUILD_THEIA}" = "ON" ]; then set -ex; \
-  yarn --pure-lockfile; \
-  NODE_OPTIONS="--max-old-space-size=4096" yarn theia build; \
-  HEAD_LINE_NUMBER=$(grep -n '</head>' lib/index.html | cut -f1 -d:); \
-  SCRIPT_LINE='<script>function ping(){if (document.hasFocus()){fetch("/ide/ping")}};document.addEventListener("focus",ping);setInterval(ping,60000)</script>'; \
-  sed -i "${HEAD_LINE_NUMBER}i${SCRIPT_LINE}" lib/index.html; \
-  yarn theia download:plugins; \
-  yarn --production; \
-  yarn autoclean --init; \
-  echo *.ts >> .yarnclean; \
-  echo *.ts.map >> .yarnclean; \
-  echo *.spec.* >> .yarnclean; \
-  yarn autoclean --force; \
-  yarn cache clean; \
-  rm -rf /tmp/*; \
-  rm -rf /usr/share/doc; \
-  rm -rf /var/lib/apt/lists/*; \
-  rm -rf /home/node/*; \
-  find / -depth \
-    \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
-    -exec 'rm' '-rf' '{}' '+'; fi
+RUN set -ex; \
+  if [ "${BUILD_THEIA}" = "ON" ]; then  \
+    yarn --pure-lockfile; \
+    SCRIPT_LINE='<script>function ping(){if (document.hasFocus()){fetch("/ide/ping")}};document.addEventListener("focus",ping);setInterval(ping,60000)</script>'; \
+    NODE_OPTIONS="--max-old-space-size=4096" yarn theia build; \
+    HEAD_LINE_NUMBER=$(grep -n '</head>' lib/index.html | cut -f1 -d:); \
+    sed -i "${HEAD_LINE_NUMBER}i${SCRIPT_LINE}" lib/index.html; \
+    yarn theia download:plugins; \
+    yarn --production; \
+    yarn autoclean --init; \
+    echo *.ts >> .yarnclean; \
+    echo *.ts.map >> .yarnclean; \
+    echo *.spec.* >> .yarnclean; \
+    yarn autoclean --force; \
+    yarn cache clean; \
+    rm -rf /tmp/*; \
+    rm -rf /usr/share/doc; \
+    rm -rf /var/lib/apt/lists/*; \
+    rm -rf /home/node/*; \
+    find / -depth \
+      \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
+      -exec 'rm' '-rf' '{}' '+';  \
+  fi
 
 # PRETTY SHELL NECESSARY
 RUN set -ex; \

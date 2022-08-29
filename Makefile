@@ -4,14 +4,15 @@ export GIT_TAG
 
 # Theia IDES
 THEIA_BASE_IDE := \
-	theia-base-38 theia-base-39 theia-base-310 \
-	theia-base-38-bare theia-base-39-bare theia-base-310-bare \
-	webtop-base-ubuntu
+	theia-base-38 theia-base-39 theia-base-310 theia-base-311 \
+	theia-base-38-bare theia-base-39-bare theia-base-310-bare theia-base-311-bare \
+	webtop-base-38 webtop-base-39 webtop-base-310 webtop-base-311
 
 THEIA_IDES := \
-	theia-xv6 theia-admin theia-devops theia-jepst theia-golang \
+	theia-xv6 theia-admin theia-golang \
 	theia-flask-39 theia-flask-310 \
-	theia-mysql-39 theia-mysql-310
+	theia-mysql-39 theia-mysql-310 \
+	theia-devops theia-jepst webtop-jepst
 
 help:
 	@echo 'For convenience'

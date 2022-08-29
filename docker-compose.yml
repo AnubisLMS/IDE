@@ -18,12 +18,20 @@ services:
         PY_VERSION: '3.9.10'
         BUILD_THEIA: 'ON'
 
+  theia-base-311:
+    image: registry.digitalocean.com/anubis/theia-base:python-3.11
+    build:
+      context: ./theia-base
+      args:
+        PY_VERSION: '3.11.0rc1'
+        BUILD_THEIA: 'ON'
+
   theia-base-310:
     image: registry.digitalocean.com/anubis/theia-base:python-3.10
     build:
       context: ./theia-base
       args:
-        PY_VERSION: '3.10.2'
+        PY_VERSION: '3.10.6'
         BUILD_THEIA: 'ON'
 
   theia-base-38-bare:
@@ -47,14 +55,8 @@ services:
     build:
       context: ./theia-base
       args:
-        PY_VERSION: '3.10.2'
+        PY_VERSION: '3.10.6'
         BUILD_THEIA: 'OFF'
-
-  webtop-base-ubuntu:
-    image: registry.digitalocean.com/anubis/webtop-base:ubuntu
-    build:
-      context: ./webtop-base
-      args: {}
 
   theia-golang:
     image: registry.digitalocean.com/anubis/theia-golang:latest
@@ -103,3 +105,10 @@ services:
   theia-jepst:
     image: registry.digitalocean.com/anubis/theia-jepst:latest
     build: ./theia-jepst
+
+  webtop-base-ubuntu:
+    image: registry.digitalocean.com/anubis/webtop-base:ubuntu
+    build:
+      context: ./theia-base
+      dockerfile: Dockerfile-webtop
+      args: {}

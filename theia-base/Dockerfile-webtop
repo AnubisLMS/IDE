@@ -1,15 +1,36 @@
-# https://github.com/theia-ide/theia-apps/tree/master/theia-cpp-docker
+# https://docs.linuxserver.io/images/docker-webtop
 
-ARG NODE_VERSION=12.22.6
-FROM node:${NODE_VERSION}-bullseye-slim as base
+ARG TAG=ubuntu-xfce
+ARG BASE_IMAGE=lscr.io/linuxserver/webtop
+FROM $BASE_IMAGE:$TAG
 
-ARG USER=anubis
-ARG DIST=bullseye
+ARG USER=abc
+ARG DIST=focal
 ENV TZ=America/New_York \
     PUID=1001 \
     GUID=1001 \
     KEYBOARD=en-us-qwerty \
-    CUSTOM_PORT=5000
+    CUSTOM_PORT=5000 \
+    DEBIAN_FRONTEND=noninteractive
+
+# Webtop setup
+RUN set -eux; \
+  apt-get update; \
+  apt-get install git wget build-essential -y --no-install-recommends; \
+  mkdir -p /home/anubis; \
+  chown -R ${PUID}:${GUID} /home/anubis; \
+  usermod -d /home/anubis abc; \
+  groupmod -g ${GUID} abc; \
+  cd /home/anubis; \
+  sed -i 's/\/config/\/home\/anubis/g' $(find /defaults /etc/cont-init.d /etc/services.d -type f); \
+  wget 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64' -O /tmp/code.deb; \
+  apt-get install -y /tmp/code.deb; \
+  rm -rf /tmp/*; \
+  rm -rf /usr/share/doc; \
+  rm -rf /var/lib/apt/lists/*; \
+  rm -rf /defaults/*; \
+  cd /etc/cont-init.d/; \
+  rm -f 90-custom-folders 99-custom-scripts 30-config;
 
 ARG PY_VERSION=3.10.6
 ENV PY_VERSION=$PY_VERSION \
@@ -28,25 +49,22 @@ ENV PY_VERSION=$PY_VERSION \
     LANG="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8"
 
-WORKDIR /opt/theia
-
-# Setup high level dependencies (mainly python)
-RUN set -ex; \
-  apt update; \
-  apt upgrade -y; \
+RUN set -eux; \
+  apt-get update; \
+  apt-get upgrade -y; \
   apt-get install -y --no-install-recommends \
     wget gpg gnupg apt-transport-https ca-certificates apt-utils; \
   wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -; \
   echo "deb http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST} main" \
     > /etc/apt/sources.list.d/llvm.list; \
   apt-get update; \
-    apt-get install -y --no-install-recommends \
-    git curl wget build-essential tree clangd zsh exa locales \
+  apt-get install -y --no-install-recommends \
+    git curl wget build-essential tree clangd zsh locales unzip \
     libffi-dev libexpat1-dev \
     libgdbm-dev liblzma-dev zlib1g-dev \
     libsqlite3-dev libssl-dev openssl \
     libsecret-1-0 sqlite3 libbz2-dev bzip2 fzf; \
-  apt remove -y python python-pip python3-pip python3; \
+  apt-get remove -y python python-pip python3-pip python3; \
   cd /; \
   echo 'LANG=en_US.UTF-8' > /etc/locale.conf; \
   echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen; \
@@ -80,14 +98,12 @@ RUN set -ex; \
   pip3 install --upgrade --no-cache-dir pip; \
   pip3 install --upgrade --no-cache-dir python-language-server supervisor setuptools; \
   pip3 install --upgrade --no-cache-dir pyyaml requests gitpython parse lorem; \
-  adduser --disabled-password --gecos '' --uid ${PUID} anubis; \
-  chown -R ${PUID}:${GUID} /home/anubis; \
   cd /home/anubis; \
   cp /etc/skel/.bash_logout /etc/skel/.bashrc /etc/skel/.profile /home/anubis/; \
   echo 'cat /etc/motd' >> /etc/skel/.bashrc; \
   cd /home/anubis; \
   chmod g+rw /home; \
-  chown -R anubis:anubis /home/anubis; \
+  chown -R ${USER}:${USER} /home/anubis; \
   apt remove -y libffi-dev libexpat1-dev \
     libgdbm-dev liblzma-dev zlib1g-dev; \
   apt autoclean -y; \
@@ -101,33 +117,24 @@ RUN set -ex; \
     \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
     -exec 'rm' '-rf' '{}' '+';
 
-# Build Theia Application
-ARG BUILD_THEIA=ON
-COPY latest.package.json package.json
-RUN if [ "${BUILD_THEIA}" = "ON" ]; then set -ex; \
-  yarn --pure-lockfile; \
-  NODE_OPTIONS="--max-old-space-size=4096" yarn theia build; \
-  HEAD_LINE_NUMBER=$(grep -n '</head>' lib/index.html | cut -f1 -d:); \
-  SCRIPT_LINE='<script>function ping(){if (document.hasFocus()){fetch("/ide/ping")}};document.addEventListener("focus",ping);setInterval(ping,60000)</script>'; \
-  sed -i "${HEAD_LINE_NUMBER}i${SCRIPT_LINE}" lib/index.html; \
-  yarn theia download:plugins; \
-  yarn --production; \
-  yarn autoclean --init; \
-  echo *.ts >> .yarnclean; \
-  echo *.ts.map >> .yarnclean; \
-  echo *.spec.* >> .yarnclean; \
-  yarn autoclean --force; \
-  yarn cache clean; \
+# Exa
+ARG EXA_VERSION=0.10.1
+RUN set -eux; \
+  cd /tmp; mkdir exa; \
+  wget https://github.com/ogham/exa/releases/download/v${EXA_VERSION}/exa-linux-x86_64-v${EXA_VERSION}.zip; \
+  unzip -d /tmp/exa exa-linux-x86_64-v${EXA_VERSION}.zip; \
+  cd exa; \
+  cp bin/exa /usr/local/bin/; \
+  cp completions/exa.zsh /usr/local/share/zsh/site-functions/; \
+  cd /; \
   rm -rf /tmp/*; \
   rm -rf /usr/share/doc; \
+  rm -rf /var/cache/apt/*; \
   rm -rf /var/lib/apt/lists/*; \
-  rm -rf /home/node/*; \
-  find / -depth \
-    \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
-    -exec 'rm' '-rf' '{}' '+'; fi
+  rm -rf /home/node/*;
 
 # PRETTY SHELL NECESSARY
-RUN set -ex; \
+RUN set -eux; \
   mkdir -p /etc/anubis/skel/; \
   mkdir -p /etc/anubis/init.d/; \
   chsh -s /usr/bin/zsh ${USER}; \
@@ -142,11 +149,9 @@ COPY anubis.zsh-theme /opt/oh-my-zsh/custom/themes/anubis.zsh-theme
 RUN set -eux; \
   git clone https://github.com/AnubisLMS/AnubisCLI.git /cli; \
   pip3 install --no-cache-dir /cli; \
-  rm -rf /cli
+  rm -rf /cli;
 
+COPY 30-config /etc/cont-init.d/30-config
+COPY code.desktop /usr/share/applications/code.desktop
 COPY motd.txt /etc/motd
-COPY supervisord.conf initialize-ide.py /
-
-USER ${USER}
-WORKDIR /opt/theia
-ENTRYPOINT ["/usr/local/bin/supervisord", "--nodaemon", "-c", "/supervisord.conf"]
+COPY initialize-ide.py /etc/cont-init.d/00-initialize-ide.py

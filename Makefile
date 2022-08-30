@@ -9,7 +9,7 @@ THEIA_BASE_IDE := \
 	webtop-base-38 webtop-base-39 webtop-base-310
 
 THEIA_IDES := \
-	theia-xv6 theia-admin theia-golang \
+	theia-cpp theia-admin theia-golang \
 	theia-flask-39 theia-flask-310 \
 	theia-mysql-39 theia-mysql-310 \
 	theia-devops theia-jepst webtop-jepst

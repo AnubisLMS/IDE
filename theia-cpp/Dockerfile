@@ -8,7 +8,7 @@ RUN set -ex; \
   apt-get install -y --no-install-recommends \
     git make cmake strace \
     gcc-multilib g++-multilib libc6-dev \
-    clangd qemu-system-i386 libgmp-dev; \
+    clangd clang-format qemu-system-i386 libgmp-dev; \
   cd /; \
   wget https://ftp.gnu.org/gnu/gdb/gdb-11.2.tar.xz; \
   tar xJf gdb-11.2.tar.xz; \

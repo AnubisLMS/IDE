@@ -97,9 +97,9 @@ services:
     image: registry.digitalocean.com/anubis/theia-golang:latest
     build: ./theia-golang
 
-  theia-xv6:
-    image: registry.digitalocean.com/anubis/theia-xv6:latest
-    build: ./theia-xv6
+  theia-cpp:
+    image: registry.digitalocean.com/anubis/theia-cpp:latest
+    build: ./theia-cpp
 
   theia-admin:
     image: registry.digitalocean.com/anubis/theia-admin:latest

@@ -142,7 +142,7 @@ COPY anubis.zsh-theme /opt/oh-my-zsh/custom/themes/anubis.zsh-theme
 
 # Anubis CLI
 RUN set -eux; \
-  git clone https://github.com/AnubisLMS/AnubisCLI.git /cli; \
+  git clone https://github.com/AnubisLMS/CLI.git /cli; \
   pip3 install --no-cache-dir /cli; \
   rm -rf /cli
 

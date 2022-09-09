@@ -1,6 +1,6 @@
 # https://github.com/theia-ide/theia-apps/tree/master/theia-cpp-docker
 
-ARG NODE_VERSION=12.22.6
+ARG NODE_VERSION=18
 FROM node:${NODE_VERSION}-bullseye-slim as base
 
 ARG DIST=bullseye
@@ -35,7 +35,7 @@ RUN set -ex; \
   apt update; \
   apt upgrade -y; \
   apt-get install -y --no-install-recommends \
-    wget gpg gnupg apt-transport-https ca-certificates apt-utils; \
+    wget gpg gnupg apt-transport-https ca-certificates apt-utils pkg-config; \
   wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -; \
   echo "deb http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST} main" \
     > /etc/apt/sources.list.d/llvm.list; \
@@ -45,7 +45,7 @@ RUN set -ex; \
     libffi-dev libexpat1-dev \
     libgdbm-dev liblzma-dev zlib1g-dev \
     libsqlite3-dev libssl-dev openssl \
-    libsecret-1-0 sqlite3 libbz2-dev bzip2 fzf; \
+    libsecret-1-0 libsecret-1-dev sqlite3 libbz2-dev bzip2 fzf; \
   apt remove -y python python-pip python3-pip python3; \
   cd /; \
   echo 'LANG=en_US.UTF-8' > /etc/locale.conf; \
@@ -106,6 +106,9 @@ ARG BUILD_THEIA=ON
 COPY latest.package.json package.json
 RUN set -ex; \
   if [ "${BUILD_THEIA}" = "ON" ]; then  \
+    apt update; \
+    apt install -y --no-install-recommends pkg-config libsecret-1-dev; \
+    export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/; \
     yarn --pure-lockfile; \
     SCRIPT_LINE='<script>function ping(){if (document.hasFocus()){fetch("/ide/ping")}};document.addEventListener("focus",ping);setInterval(ping,60000)</script>'; \
     NODE_OPTIONS="--max-old-space-size=4096" yarn theia build; \
@@ -119,6 +122,8 @@ RUN set -ex; \
     echo *.spec.* >> .yarnclean; \
     yarn autoclean --force; \
     yarn cache clean; \
+    apt autoclean -y; \
+    apt autoremove -y; \
     rm -rf /tmp/*; \
     rm -rf /usr/share/doc; \
     rm -rf /var/lib/apt/lists/*; \

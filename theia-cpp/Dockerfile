@@ -2,23 +2,28 @@
 
 FROM registry.digitalocean.com/anubis/theia-base:python-3.10 as theia
 
+ARG GDB_VERSION=11.1
+
 USER root
 RUN set -ex; \
   apt-get update; \
   apt-get install -y --no-install-recommends \
     git make cmake strace \
     gcc-multilib g++-multilib libc6-dev \
-    clangd clang-format qemu-system-i386 libgmp-dev; \
+    clangd clang-format qemu-system-i386 libgmp-dev libexpat-dev; \
   cd /; \
-  wget https://ftp.gnu.org/gnu/gdb/gdb-11.2.tar.xz; \
-  tar xJf gdb-11.2.tar.xz; \
-  rm gdb-11.2.tar.xz; \
-  cd gdb-11.2; \
-  ./configure --with-python=python3.10 --prefix=/usr/local; \
+  \
+  `# We compile our own gdb like this so that it does not install the system python3` \
+  wget https://ftp.gnu.org/gnu/gdb/gdb-${GDB_VERSION}.tar.xz; \
+  tar xJf gdb-${GDB_VERSION}.tar.xz; \
+  rm gdb-${GDB_VERSION}.tar.xz; \
+  cd gdb-${GDB_VERSION}; \
+  ./configure --with-python=python3.10 --prefix=/usr/ --with-expat; \
   make -j $(nproc); \
   make install; \
   cd ..; \
-  rm -rf gdb-11.2; \
+  rm -rf gdb-${GDB_VERSION}; \
+  \
   echo 'set auto-load safe-path /' > /etc/anubis/skel/.gdbinit; \
   echo 'source /opt/pwndbg/gdbinit.py' >> /etc/anubis/skel/.gdbinit; \
   git clone https://github.com/pwndbg/pwndbg.git /opt/pwndbg; \
@@ -31,4 +36,5 @@ RUN set -ex; \
     \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
     -exec 'rm' '-rf' '{}' '+';
 
+RUN git clone https://github.com/AnubisLMS/xv6 /home/anubis/xv6 && chown anubis:anubis -R /home/anubis
 USER anubis

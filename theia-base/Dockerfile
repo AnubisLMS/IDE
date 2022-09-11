@@ -108,7 +108,6 @@ RUN set -ex; \
   if [ "${BUILD_THEIA}" = "ON" ]; then  \
     apt update; \
     apt install -y --no-install-recommends pkg-config libsecret-1-dev; \
-    export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/; \
     yarn --pure-lockfile; \
     SCRIPT_LINE='<script>function ping(){if (document.hasFocus()){fetch("/ide/ping")}};document.addEventListener("focus",ping);setInterval(ping,60000)</script>'; \
     NODE_OPTIONS="--max-old-space-size=4096" yarn theia build; \

@@ -6,6 +6,8 @@ USER root
 # Step for downloading any new extensions
 COPY latest.package.json package.json
 RUN set -ex; \
+  apt update; \
+  apt install -y --no-install-recommends pkg-config libsecret-1-dev; \
   yarn --pure-lockfile; \
   NODE_OPTIONS="--max-old-space-size=4096" yarn theia build; \
   HEAD_LINE_NUMBER=$(grep -n '</head>' lib/index.html | cut -f1 -d:); \
@@ -15,6 +17,12 @@ RUN set -ex; \
   yarn --production; \
   yarn autoclean --force; \
   yarn cache clean; \
+  apt autoclean -y; \
+  apt autoremove -y; \
+  rm -rf /tmp/*; \
+  rm -rf /usr/share/doc; \
+  rm -rf /var/lib/apt/lists/*; \
+  rm -rf /home/node/*; \
   find / -depth \
     \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
     -exec 'rm' '-rf' '{}' '+';

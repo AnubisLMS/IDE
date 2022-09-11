@@ -36,5 +36,4 @@ RUN set -ex; \
     \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
     -exec 'rm' '-rf' '{}' '+';
 
-RUN git clone https://github.com/AnubisLMS/xv6 /home/anubis/xv6 && chown anubis:anubis -R /home/anubis
 USER anubis

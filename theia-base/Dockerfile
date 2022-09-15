@@ -46,7 +46,7 @@ RUN set -ex; \
     libgdbm-dev liblzma-dev zlib1g-dev \
     libsqlite3-dev libssl-dev openssl \
     libsecret-1-0 libsecret-1-dev sqlite3 libbz2-dev bzip2 fzf \
-    nano; \
+    nano htop; \
   apt remove -y python python-pip python3-pip python3; \
   cd /; \
   echo 'LANG=en_US.UTF-8' > /etc/locale.conf; \

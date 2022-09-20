@@ -55,10 +55,10 @@ RUN set -ex; \
         $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null; \
     \
     `# ctop.sh`  \
-    curl -fsSL https://azlux.fr/repo.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/azlux-archive-keyring.gpg; \
+    curl -fsSL https://azlux.fr/repo.gpg.key | gpg --dearmor -o /usr/share/keyrings/azlux-archive-keyring.gpg; \
     echo \
       "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/azlux-archive-keyring.gpg] http://packages.azlux.fr/debian \
-      $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/azlux.list >/dev/null; \
+      $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/azlux.list >/dev/null; \
     \
     apt-get update; \
     apt-get install -y --no-install-recommends \

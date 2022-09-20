@@ -54,6 +54,12 @@ RUN set -ex; \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
         $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null; \
     \
+    `# ctop.sh`  \
+    curl -fsSL https://azlux.fr/repo.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/azlux-archive-keyring.gpg; \
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/azlux-archive-keyring.gpg] http://packages.azlux.fr/debian \
+      $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/azlux.list >/dev/null; \
+    \
     apt-get update; \
     apt-get install -y --no-install-recommends \
       git curl wget build-essential tree clangd zsh exa locales \
@@ -62,7 +68,7 @@ RUN set -ex; \
       libsqlite3-dev libssl-dev openssl \
       libsecret-1-0 libsecret-1-dev sqlite3 libbz2-dev bzip2 fzf \
       nano htop less \
-      docker-ce-cli docker-compose-plugin; \
+      docker-ce-cli docker-compose-plugin docker-ctop; \
     apt remove -y python python-pip python3-pip python3; \
     cd /; \
     \

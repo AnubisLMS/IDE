@@ -25,6 +25,9 @@ context:
 	doctl kubernetes cluster kubeconfig save anubis --context anubis
 	doctl registry login --context anubis
 
+.PHONY: all             # Build, Push & Propigate all ides
+all: build-base-ides build-ides push-base-ides push-ides prop-ides
+
 .PHONY: build-base-ides # Build base ide images
 build-base-ides:
 	@echo 'building base images'

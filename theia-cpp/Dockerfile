@@ -28,6 +28,8 @@ RUN set -ex; \
   echo 'set auto-load safe-path /' > /etc/anubis/skel/.gdbinit; \
   echo 'source /opt/pwndbg/gdbinit.py' >> /etc/anubis/skel/.gdbinit; \
   git clone https://github.com/pwndbg/pwndbg.git /opt/pwndbg; \
+  cd /opt/pwndbg; \
+  git checkout cf2c3eede8f0059236e07857159ece978fd56912; \
   pip3 install --no-cache-dir -r /opt/pwndbg/requirements.txt; \
   rm -rf /tmp/*; \
   rm -rf /usr/share/doc; \

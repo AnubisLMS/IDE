@@ -67,7 +67,7 @@ RUN set -ex; \
       libgdbm-dev liblzma-dev zlib1g-dev \
       libsqlite3-dev libssl-dev openssl \
       libsecret-1-0 libsecret-1-dev sqlite3 libbz2-dev bzip2 fzf \
-      nano htop less \
+      nano htop less mariadb-client openssh-client pigz procps \
       docker-ce-cli docker-compose-plugin docker-ctop; \
     apt remove -y python python-pip python3-pip python3; \
     cd /; \

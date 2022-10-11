@@ -127,6 +127,7 @@ RUN set -ex; \
   chown -R ${USER}:${USER} /home/anubis;
 
 # Copy file over for skel initialization
+COPY gopath_fix.sh /etc/anubis/init.d/gopath_fix.sh
 COPY gdbinit /etc/anubis/skel/.gdbinit
 COPY motd.txt /etc/motd
 

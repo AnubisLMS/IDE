@@ -1,0 +1,84 @@
+name: Anubis IDE CD/CI
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+
+  # Build Stage.
+  # Will build the docker image, and push it
+  # to the container registry.
+  build-ide-images:
+    name: Build IDE images
+    runs-on: ubuntu-latest
+    environment: anubis
+    strategy:
+      matrix:
+        base-image:
+          - theia-base-38
+          - theia-base-39
+          - theia-base-310
+          - theia-base-38-bare
+          - theia-base-39-bare
+          - theia-base-310-bare
+          - webtop-base-38
+          - webtop-base-39
+          - webtop-base-310
+        other-image:
+          - theia-cpp
+          - theia-admin
+          - theia-golang
+          - theia-flask-39
+          - theia-flask-310
+          - theia-mysql-39
+          - theia-mysql-310
+          - theia-devops
+          - theia-jepst
+          - webtop-jepst
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Log into DigitalOcean container registry
+        run: doctl registry login
+      - name: Build base IDE images
+        run: env GIT_TAG=$(git log -1 --pretty=%h) docker compose build ${{ matrix.base-image }}
+      - name: Build base IDE images
+        run: env GIT_TAG=latest docker compose build ${{ matrix.base-image }}
+      - name: Build other IDE images
+        run: env GIT_TAG=$(git log -1 --pretty=%h) docker compose build ${{ matrix.other-image }}
+      - name: Build other IDE images
+        run: env GIT_TAG=latest docker compose build ${{ matrix.other-image }}
+      - name: Push base IDE images to registry
+        run: env GIT_TAG=$(git log -1 --pretty=%h) docker compose push ${{ matrix.base-image }}
+      - name: Push base IDE images to registry
+        run: env GIT_TAG=latest docker compose push ${{ matrix.base-image }}
+      - name: Push other IDE images to registry
+        run: env GIT_TAG=$(git log -1 --pretty=%h) docker compose push ${{ matrix.other-image }}
+      - name: Push other IDE images to registry
+        run: env GIT_TAG=latest docker compose push ${{ matrix.other-image }}
+
+  # Deploy step.
+  # Will push out yaml to the k8s cluster, then restart
+  # deployments.
+  deploy:
+    name: Deploy to Anubis k8s cluster
+    needs: [build-ide-images]
+    runs-on: ubuntu-latest
+    environment: anubis
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Save DigitalOcean kubeconfig
+        run: doctl kubernetes cluster kubeconfig save anubis
+      - name: Helm upgrade
+        run: make upgrade
+      - name: Verify deployment
+        run: make status

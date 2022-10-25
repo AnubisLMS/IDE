@@ -10,8 +10,10 @@ jobs:
   # Build Stage.
   # Will build the docker image, and push it
   # to the container registry.
-  build-ide-images:
-    name: Build IDE images
+  
+  # Build IDE base images
+  build-ide-base-images:
+    name: Build IDE base images
     runs-on: ubuntu-latest
     environment: anubis
     strategy:
@@ -26,7 +28,31 @@ jobs:
           - webtop-base-38
           - webtop-base-39
           - webtop-base-310
-        other-image:
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Log into DigitalOcean container registry
+        run: doctl registry login
+      - name: Build base IDE images
+        run: env GIT_TAG=$(git log -1 --pretty=%h) docker compose build ${{ matrix.base-image }}
+      - name: Build base IDE images
+        run: env GIT_TAG=latest docker compose build ${{ matrix.base-image }}
+      - name: Push base IDE images to registry
+        run: env GIT_TAG=$(git log -1 --pretty=%h) docker compose push ${{ matrix.base-image }}
+      - name: Push base IDE images to registry
+        run: env GIT_TAG=latest docker compose push ${{ matrix.base-image }}
+
+  # Build IDE downstream images
+  build-downstream-images:
+    name: Build IDE downstream images
+    runs-on: ubuntu-latest
+    environment: anubis
+    strategy:
+      matrix:
+        downstream-image:
           - theia-cpp
           - theia-admin
           - theia-golang
@@ -45,22 +71,14 @@ jobs:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - name: Log into DigitalOcean container registry
         run: doctl registry login
-      - name: Build base IDE images
-        run: env GIT_TAG=$(git log -1 --pretty=%h) docker compose build ${{ matrix.base-image }}
-      - name: Build base IDE images
-        run: env GIT_TAG=latest docker compose build ${{ matrix.base-image }}
-      - name: Build other IDE images
-        run: env GIT_TAG=$(git log -1 --pretty=%h) docker compose build ${{ matrix.other-image }}
-      - name: Build other IDE images
-        run: env GIT_TAG=latest docker compose build ${{ matrix.other-image }}
-      - name: Push base IDE images to registry
-        run: env GIT_TAG=$(git log -1 --pretty=%h) docker compose push ${{ matrix.base-image }}
-      - name: Push base IDE images to registry
-        run: env GIT_TAG=latest docker compose push ${{ matrix.base-image }}
-      - name: Push other IDE images to registry
-        run: env GIT_TAG=$(git log -1 --pretty=%h) docker compose push ${{ matrix.other-image }}
-      - name: Push other IDE images to registry
-        run: env GIT_TAG=latest docker compose push ${{ matrix.other-image }}
+      - name: Build downstream IDE images
+        run: env GIT_TAG=$(git log -1 --pretty=%h) docker compose build ${{ matrix.downstream-image }}
+      - name: Build downstream IDE images
+        run: env GIT_TAG=latest docker compose build ${{ matrix.downstream-image }}
+      - name: Push downstream IDE images to registry
+        run: env GIT_TAG=$(git log -1 --pretty=%h) docker compose push ${{ matrix.downstream-image }}
+      - name: Push downstream IDE images to registry
+        run: env GIT_TAG=latest docker compose push ${{ matrix.downstream-image }}
 
   # Deploy step.
   # Will push out yaml to the k8s cluster, then restart

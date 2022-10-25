@@ -96,7 +96,5 @@ jobs:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - name: Save DigitalOcean kubeconfig
         run: doctl kubernetes cluster kubeconfig save anubis
-      - name: Helm upgrade
-        run: make upgrade
-      - name: Verify deployment
-        run: make status
+      - name: Propagate latest IDE images
+        run: make prop-ides

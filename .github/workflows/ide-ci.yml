@@ -46,7 +46,7 @@ jobs:
         run: env GIT_TAG=latest docker compose push ${{ matrix.base-image }}
 
   # Build IDE downstream images
-  build-downstream-images:
+  build-ide-downstream-images:
     name: Build IDE downstream images
     runs-on: ubuntu-latest
     environment: anubis
@@ -85,7 +85,7 @@ jobs:
   # deployments.
   deploy:
     name: Deploy to Anubis k8s cluster
-    needs: [build-ide-images]
+    needs: [build-ide-base-images, build-ide-downstream-images]
     runs-on: ubuntu-latest
     environment: anubis
     steps:

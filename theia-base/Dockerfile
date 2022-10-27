@@ -105,7 +105,7 @@ RUN set -ex; \
       --no-cache-dir; \
     rm get-pip.py; \
     pip3 install --upgrade --no-cache-dir pip; \
-    pip3 install --upgrade --no-cache-dir python-language-server supervisor setuptools; \
+    pip3 install --upgrade --no-cache-dir python-language-server supervisor setuptools pylint; \
     pip3 install --upgrade --no-cache-dir pyyaml requests gitpython parse lorem; \
     \
     `# Users, permissions, etc` \
@@ -134,17 +134,33 @@ RUN set -ex; \
 
 # Build Theia Application
 ARG BUILD_THEIA=ON
+ARG MS_PYTHON_VERSION=2020.10.332292344
+ARG MS_JUPYTER_VERSION=2021.8.0
 COPY latest.package.json package.json
 RUN set -ex; \
   if [ "${BUILD_THEIA}" = "ON" ]; then  \
     apt update; \
-    apt install -y --no-install-recommends pkg-config libsecret-1-dev; \
+    apt install -y --no-install-recommends pkg-config libsecret-1-dev unzip zip; \
     yarn --pure-lockfile; \
     SCRIPT_LINE='<script>function ping(){if (document.hasFocus()){fetch("/ide/ping")}};document.addEventListener("focus",ping);setInterval(ping,60000)</script>'; \
     NODE_OPTIONS="--max-old-space-size=4096" yarn theia build; \
     HEAD_LINE_NUMBER=$(grep -n '</head>' lib/index.html | cut -f1 -d:); \
     sed -i "${HEAD_LINE_NUMBER}i${SCRIPT_LINE}" lib/index.html; \
     yarn theia download:plugins; \
+    wget https://open-vsx.org/api/ms-python/python/${MS_PYTHON_VERSION}/file/ms-python.python-${MS_PYTHON_VERSION}.vsix -O /opt/theia/plugins/ms-python.python-${MS_PYTHON_VERSION}.vsix; \
+    mkdir -p /opt/theia/plugins/ms-python.python; \
+    unzip -d /opt/theia/plugins/ms-python.python /opt/theia/plugins/ms-python.python-${MS_PYTHON_VERSION}.vsix; \
+    rm /opt/theia/plugins/ms-python.python-${MS_PYTHON_VERSION}.vsix; \
+    sed -i 's/"ms-toolsai.jupyter,ms-python.vscode-pylance"/"ms-toolsai.jupyter"/' /opt/theia/plugins/ms-python.python/extension.vsixmanifest; \
+    sed -i '122 s/.*/    match = re.match(r"(\\d+)(?:\\.(\\d+)(?:\\.\\d+)?)?$", version)/' /opt/theia/plugins/ms-python.python/extension/pythonFiles/lib/python/parso/utils.py; \
+    wget https://raw.githubusercontent.com/davidhalter/parso/master/parso/python/grammar39.txt -O /opt/theia/plugins/ms-python.python/extension/pythonFiles/lib/python/parso/python/grammar39.txt; \
+    wget https://raw.githubusercontent.com/davidhalter/parso/master/parso/python/grammar310.txt -O /opt/theia/plugins/ms-python.python/extension/pythonFiles/lib/python/parso/python/grammar310.txt; \
+    wget https://raw.githubusercontent.com/davidhalter/parso/master/parso/python/grammar311.txt -O /opt/theia/plugins/ms-python.python/extension/pythonFiles/lib/python/parso/python/grammar311.txt; \
+    wget https://raw.githubusercontent.com/davidhalter/parso/master/parso/python/grammar312.txt -O /opt/theia/plugins/ms-python.python/extension/pythonFiles/lib/python/parso/python/grammar312.txt; \
+    wget https://open-vsx.org/api/ms-toolsai/jupyter/${MS_JUPYTER_VERSION}/file/ms-toolsai.jupyter-${MS_JUPYTER_VERSION}.vsix -O /opt/theia/plugins/ms-toolsai.jupyter-${MS_JUPYTER_VERSION}.vsix; \
+    mkdir -p /opt/theia/plugins/ms-toolsai.jupyter; \
+    unzip -d /opt/theia/plugins/ms-toolsai.jupyter /opt/theia/plugins/ms-toolsai.jupyter-${MS_JUPYTER_VERSION}.vsix; \
+    rm /opt/theia/plugins/ms-toolsai.jupyter-${MS_JUPYTER_VERSION}.vsix; \
     yarn --production; \
     yarn autoclean --init; \
     echo *.ts >> .yarnclean; \

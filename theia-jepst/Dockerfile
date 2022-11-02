@@ -1,5 +1,5 @@
 ARG PY_VERSION=3.10
-ARG BASE_IMAGE=registry.digitalocean.com/anubis/theia-base:python-${PY_VERSION}-bare
+ARG BASE_IMAGE=registry.digitalocean.com/anubis/theia-base:python-${PY_VERSION}
 
 FROM ${BASE_IMAGE} as theia
 USER root
@@ -8,31 +8,12 @@ ARG USER=anubis
 ARG WEBTOP=OFF
 
 # Step for downloading any new extensions
-COPY latest.package.json package.json
 RUN set -ex; \
   if [ "${WEBTOP}" = "OFF" ]; then  \
-    apt update; \
-    apt install -y --no-install-recommends pkg-config libsecret-1-dev; \
-    yarn --pure-lockfile; \
-    NODE_OPTIONS="--max-old-space-size=4096" yarn theia build; \
-    HEAD_LINE_NUMBER=$(grep -n '</head>' lib/index.html | cut -f1 -d:); \
-    SCRIPT_LINE='<script>function ping(){if (document.hasFocus()){fetch("/ide/ping")}};document.addEventListener("focus",ping);setInterval(ping,60000)</script>'; \
-    sed -i "${HEAD_LINE_NUMBER}i${SCRIPT_LINE}" lib/index.html; \
-    yarn theia download:plugins; \
-    yarn --production; \
-    yarn autoclean --force; \
-    yarn cache clean; \
-    apt autoclean -y; \
-    apt autoremove -y; \
-    rm -rf /tmp/*; \
-    rm -rf /usr/share/doc; \
-    rm -rf /var/lib/apt/lists/*; \
-    rm -rf /home/node/*; \
-    find / -depth \
-      \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
-      -exec 'rm' '-rf' '{}' '+'; \
-  else \
-    rm package.json; \
+    code-server --user-data-dir=/opt/code-server --install-extension haskell.haskell; \
+    code-server --user-data-dir=/opt/code-server --install-extension mshr-h.veriloghdl; \
+    code-server --user-data-dir=/opt/code-server --install-extension elixir-lsp.elixir-ls; \
+    code-server --user-data-dir=/opt/code-server --install-extension golang.Go; \
   fi
 
 ENV GO_VERSION=1.19 \
@@ -100,11 +81,7 @@ RUN set -eux; \
   rm -rf /var/lib/apt/lists/*; \
   find / -depth \
     \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
-    -exec 'rm' '-rf' '{}' '+'; \
-  if [ "${WEBTOP}" = "OFF" ]; then  \
-    sed -i 's/"default": "goreturns"/"default": "goformat"/' \
-      /opt/theia/plugins/vscode-go/extension/package.json;  \
-  fi
+    -exec 'rm' '-rf' '{}' '+';
 
 USER root
 # Compile and install glibc 2.32 from source

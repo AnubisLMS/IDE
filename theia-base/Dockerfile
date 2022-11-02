@@ -133,15 +133,17 @@ ARG BUILD_THEIA=ON
 COPY config.yml /etc/anubis/config.yml
 COPY settings.json /opt/code-server/User/settings.json
 RUN set -ex; \
-  if [ "${BUILD_THEIA}" = "ON" ]; then  \
     wget https://github.com/coder/code-server/releases/download/v4.8.1/code-server_4.8.1_amd64.deb -O /code-server_4.8.1_amd64.deb; \
     apt update; \
     apt install -y /code-server_4.8.1_amd64.deb; \
     rm /code-server_4.8.1_amd64.deb; \
-    code-server --install-extension ms-python.python; \
-    code-server --install-extension eamodio.gitlens; \
-    code-server --install-extension webfreak.debug; \
-    code-server --install-extension ms-vscode.cmake-tools; \
+    code-server --user-data-dir=/opt/code-server --install-extension ms-python.python; \
+    code-server --user-data-dir=/opt/code-server --install-extension eamodio.gitlens; \
+    code-server --user-data-dir=/opt/code-server --install-extension webfreak.debug; \
+    code-server --user-data-dir=/opt/code-server --install-extension ms-vscode.cmake-tools; \
+    code-server --user-data-dir=/opt/code-server --install-extension eclipse-cdt.cdt-gdb-vscode; \
+    code-server --user-data-dir=/opt/code-server --install-extension 13xforever.language-x86-64-assembly; \
+    code-server --user-data-dir=/opt/code-server --install-extension llvm-vs-code-extensions.vscode-clangd; \
     apt autoclean -y; \
     apt autoremove -y; \
     rm -rf /tmp/*; \
@@ -151,10 +153,9 @@ RUN set -ex; \
     find / -depth \
       \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
       -exec 'rm' '-rf' '{}' '+';  \
-  fi; \
-  chown -R anubis:anubis /opt/code-server; \
-  find /opt/code-server -type f -exec chmod -R 644 \{\} \; ; \
-  find /opt/code-server -type d -exec chmod -R 755 \{\} \;
+    chown -R anubis:anubis /opt/code-server; \
+    find /opt/code-server -type f -exec chmod -R 644 \{\} \; ; \
+    find /opt/code-server -type d -exec chmod -R 755 \{\} \;
 
 # PRETTY SHELL NECESSARY
 RUN set -ex; \

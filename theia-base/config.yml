@@ -1,0 +1,9 @@
+auth: 'none'
+cert: false
+bind-addr: '0.0.0.0:5000'
+disable-telemetry: true
+disable-update-check: true
+disable-workspace-trust: true
+user-data-dir: '/opt/code-server'
+app-name: 'Anubis'
+

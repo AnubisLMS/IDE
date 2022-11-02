@@ -1,17 +1,14 @@
 # https://github.com/theia-ide/theia-apps/tree/master/theia-cpp-docker
 
-ARG NODE_VERSION=18
-FROM node:${NODE_VERSION}-bullseye-slim as base
+FROM debian:bullseye-slim as base
 
 ARG DIST=bullseye
-ENV TZ=America/New_York \
+ARG PY_VERSION=3.10.6
+
+ENV PY_VERSION=$PY_VERSION \
+    TZ=America/New_York \
     PUID=1001 \
     GUID=1001 \
-    KEYBOARD=en-us-qwerty \
-    CUSTOM_PORT=5000
-
-ARG PY_VERSION=3.10.6
-ENV PY_VERSION=$PY_VERSION \
     NODE_VERSION=$NODE_VERSION \
     TERM=xterm-256color \
     DEBIAN_FRONTEND=noninteractive \
@@ -24,7 +21,6 @@ ENV PY_VERSION=$PY_VERSION \
     ANUBIS_WEBTOP=OFF \
     HOME=/home/anubis \
     SHELL=/usr/bin/zsh \
-    THEIA_DEFAULT_PLUGINS="local-dir:/opt/theia/plugins/" \
     LANG="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8" \
     DOCKER_HOST="tcp://localhost:2376" \
@@ -33,7 +29,7 @@ ENV PY_VERSION=$PY_VERSION \
     DOCKER_CERT_PATH="/certs/client" \
     ANUBIS_RUN_DOCKERD="0"
 
-WORKDIR /opt/theia
+WORKDIR /opt/code-server
 
 # Setup high level dependencies (mainly python)
 RUN set -ex; \
@@ -134,40 +130,18 @@ RUN set -ex; \
 
 # Build Theia Application
 ARG BUILD_THEIA=ON
-ARG MS_PYTHON_VERSION=2020.10.332292344
-ARG MS_JUPYTER_VERSION=2021.8.0
-COPY latest.package.json package.json
+COPY config.yml /etc/anubis/config.yml
+COPY settings.json /opt/code-server/User/settings.json
 RUN set -ex; \
   if [ "${BUILD_THEIA}" = "ON" ]; then  \
+    wget https://github.com/coder/code-server/releases/download/v4.8.1/code-server_4.8.1_amd64.deb -O /code-server_4.8.1_amd64.deb; \
     apt update; \
-    apt install -y --no-install-recommends pkg-config libsecret-1-dev unzip zip; \
-    yarn --pure-lockfile; \
-    SCRIPT_LINE='<script>function ping(){if (document.hasFocus()){fetch("/ide/ping")}};document.addEventListener("focus",ping);setInterval(ping,60000)</script>'; \
-    NODE_OPTIONS="--max-old-space-size=4096" yarn theia build; \
-    HEAD_LINE_NUMBER=$(grep -n '</head>' lib/index.html | cut -f1 -d:); \
-    sed -i "${HEAD_LINE_NUMBER}i${SCRIPT_LINE}" lib/index.html; \
-    yarn theia download:plugins; \
-    wget https://open-vsx.org/api/ms-python/python/${MS_PYTHON_VERSION}/file/ms-python.python-${MS_PYTHON_VERSION}.vsix -O /opt/theia/plugins/ms-python.python-${MS_PYTHON_VERSION}.vsix; \
-    mkdir -p /opt/theia/plugins/ms-python.python; \
-    unzip -d /opt/theia/plugins/ms-python.python /opt/theia/plugins/ms-python.python-${MS_PYTHON_VERSION}.vsix; \
-    rm /opt/theia/plugins/ms-python.python-${MS_PYTHON_VERSION}.vsix; \
-    sed -i 's/"ms-toolsai.jupyter,ms-python.vscode-pylance"/"ms-toolsai.jupyter"/' /opt/theia/plugins/ms-python.python/extension.vsixmanifest; \
-    sed -i '122 s/.*/    match = re.match(r"(\\d+)(?:\\.(\\d+)(?:\\.\\d+)?)?$", version)/' /opt/theia/plugins/ms-python.python/extension/pythonFiles/lib/python/parso/utils.py; \
-    wget https://raw.githubusercontent.com/davidhalter/parso/master/parso/python/grammar39.txt -O /opt/theia/plugins/ms-python.python/extension/pythonFiles/lib/python/parso/python/grammar39.txt; \
-    wget https://raw.githubusercontent.com/davidhalter/parso/master/parso/python/grammar310.txt -O /opt/theia/plugins/ms-python.python/extension/pythonFiles/lib/python/parso/python/grammar310.txt; \
-    wget https://raw.githubusercontent.com/davidhalter/parso/master/parso/python/grammar311.txt -O /opt/theia/plugins/ms-python.python/extension/pythonFiles/lib/python/parso/python/grammar311.txt; \
-    wget https://raw.githubusercontent.com/davidhalter/parso/master/parso/python/grammar312.txt -O /opt/theia/plugins/ms-python.python/extension/pythonFiles/lib/python/parso/python/grammar312.txt; \
-    wget https://open-vsx.org/api/ms-toolsai/jupyter/${MS_JUPYTER_VERSION}/file/ms-toolsai.jupyter-${MS_JUPYTER_VERSION}.vsix -O /opt/theia/plugins/ms-toolsai.jupyter-${MS_JUPYTER_VERSION}.vsix; \
-    mkdir -p /opt/theia/plugins/ms-toolsai.jupyter; \
-    unzip -d /opt/theia/plugins/ms-toolsai.jupyter /opt/theia/plugins/ms-toolsai.jupyter-${MS_JUPYTER_VERSION}.vsix; \
-    rm /opt/theia/plugins/ms-toolsai.jupyter-${MS_JUPYTER_VERSION}.vsix; \
-    yarn --production; \
-    yarn autoclean --init; \
-    echo *.ts >> .yarnclean; \
-    echo *.ts.map >> .yarnclean; \
-    echo *.spec.* >> .yarnclean; \
-    yarn autoclean --force; \
-    yarn cache clean; \
+    apt install -y /code-server_4.8.1_amd64.deb; \
+    rm /code-server_4.8.1_amd64.deb; \
+    code-server --install-extension ms-python.python; \
+    code-server --install-extension eamodio.gitlens; \
+    code-server --install-extension webfreak.debug; \
+    code-server --install-extension ms-vscode.cmake-tools; \
     apt autoclean -y; \
     apt autoremove -y; \
     rm -rf /tmp/*; \
@@ -177,7 +151,10 @@ RUN set -ex; \
     find / -depth \
       \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
       -exec 'rm' '-rf' '{}' '+';  \
-  fi
+  fi; \
+  chown -R anubis:anubis /opt/code-server; \
+  find /opt/code-server -type f -exec chmod -R 644 \{\} \; ; \
+  find /opt/code-server -type d -exec chmod -R 755 \{\} \;
 
 # PRETTY SHELL NECESSARY
 RUN set -ex; \

@@ -1,0 +1,6 @@
+{
+  "files.enableTrash": false,
+  "editor.autoSave": "on",
+  "terminal.integrated.cursorBlinking": true,
+  "workbench.colorTheme": "Visual Studio Dark"
+}

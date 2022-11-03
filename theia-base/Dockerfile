@@ -2,6 +2,7 @@
 
 FROM debian:bullseye-slim as base
 
+ARG USER=anubis
 ARG DIST=bullseye
 ARG PY_VERSION=3.10.6
 
@@ -130,13 +131,15 @@ RUN set -ex; \
 
 # Build Theia Application
 ARG BUILD_THEIA=ON
+ARG CODE_SERVER_VERSION=4.8.1
 COPY config.yml /etc/anubis/config.yml
 COPY settings.json /opt/code-server/User/settings.json
 RUN set -ex; \
-    wget https://github.com/coder/code-server/releases/download/v4.8.1/code-server_4.8.1_amd64.deb -O /code-server_4.8.1_amd64.deb; \
+    wget https://github.com/coder/code-server/releases/download/v${CODE_SERVER_VERSION}/code-server_${CODE_SERVER_VERSION}_amd64.deb \
+      -O /code-server_${CODE_SERVER_VERSION}_amd64.deb; \
     apt update; \
-    apt install -y /code-server_4.8.1_amd64.deb; \
-    rm /code-server_4.8.1_amd64.deb; \
+    apt install -y /code-server_${CODE_SERVER_VERSION}_amd64.deb; \
+    rm /code-server_${CODE_SERVER_VERSION}_amd64.deb; \
     code-server --user-data-dir=/opt/code-server --install-extension ms-python.python; \
     code-server --user-data-dir=/opt/code-server --install-extension eamodio.gitlens; \
     code-server --user-data-dir=/opt/code-server --install-extension webfreak.debug; \
@@ -179,5 +182,5 @@ COPY motd.txt /etc/motd
 COPY supervisord.conf initialize-ide.py /
 
 USER ${USER}
-WORKDIR /opt/theia
+WORKDIR /opt/anubis
 ENTRYPOINT ["/usr/local/bin/supervisord", "--nodaemon", "-c", "/supervisord.conf"]

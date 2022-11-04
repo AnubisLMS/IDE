@@ -130,17 +130,28 @@ RUN set -ex; \
       -exec 'rm' '-rf' '{}' '+';
 
 # Build Theia Application
-ARG BUILD_THEIA=ON
 ARG CODE_SERVER_VERSION=4.8.1
+ARG CODE_SERVER_INDEX=/usr/lib/code-server/lib/vscode/out/vs/code/browser/workbench/workbench.html
 COPY config.yml /etc/anubis/config.yml
 COPY settings.json /opt/code-server/User/settings.json
 RUN set -ex; \
+    \
+    `# Install code-server`; \
     wget https://github.com/coder/code-server/releases/download/v${CODE_SERVER_VERSION}/code-server_${CODE_SERVER_VERSION}_amd64.deb \
       -O /code-server_${CODE_SERVER_VERSION}_amd64.deb; \
     apt update; \
     apt install -y /code-server_${CODE_SERVER_VERSION}_amd64.deb; \
     rm /code-server_${CODE_SERVER_VERSION}_amd64.deb; \
+    \
+    `# Disable insecure warning`; \
     sed -i 's/window.isSecureContext||/false&&/' /usr/lib/code-server/lib/vscode/out/vs/workbench/workbench.web.main.js; \
+    \
+    `# Insert heartbeat script`; \
+    SCRIPT_LINE='<script>function ping(){if (document.hasFocus()){fetch("/ide/ping")}};document.addEventListener("focus",ping);setInterval(ping,60000)</script>'; \
+    HEAD_LINE_NUMBER=$(grep -n '</head>' ${CODE_SERVER_INDEX} | cut -f1 -d:); \
+    sed -i "${HEAD_LINE_NUMBER}i${SCRIPT_LINE}" ${CODE_SERVER_INDEX}; \
+    \
+    `# Install Extensions`; \
     code-server --user-data-dir=/opt/code-server --install-extension ms-python.python; \
     code-server --user-data-dir=/opt/code-server --install-extension eamodio.gitlens; \
     code-server --user-data-dir=/opt/code-server --install-extension webfreak.debug; \
@@ -148,6 +159,8 @@ RUN set -ex; \
     code-server --user-data-dir=/opt/code-server --install-extension eclipse-cdt.cdt-gdb-vscode; \
     code-server --user-data-dir=/opt/code-server --install-extension 13xforever.language-x86-64-assembly; \
     code-server --user-data-dir=/opt/code-server --install-extension llvm-vs-code-extensions.vscode-clangd; \
+    \
+    `# Cleanup`; \
     apt autoclean -y; \
     apt autoremove -y; \
     rm -rf /tmp/*; \

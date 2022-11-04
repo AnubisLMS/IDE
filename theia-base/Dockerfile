@@ -140,6 +140,7 @@ RUN set -ex; \
     apt update; \
     apt install -y /code-server_${CODE_SERVER_VERSION}_amd64.deb; \
     rm /code-server_${CODE_SERVER_VERSION}_amd64.deb; \
+    sed -i 's/window.isSecureContext||/false&&/' /usr/lib/code-server/lib/vscode/out/vs/workbench/workbench.web.main.js; \
     code-server --user-data-dir=/opt/code-server --install-extension ms-python.python; \
     code-server --user-data-dir=/opt/code-server --install-extension eamodio.gitlens; \
     code-server --user-data-dir=/opt/code-server --install-extension webfreak.debug; \

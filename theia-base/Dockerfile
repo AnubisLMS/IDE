@@ -1,5 +1,8 @@
 # https://github.com/theia-ide/theia-apps/tree/master/theia-cpp-docker
 
+ARG ANUBIS_GIT_COMMIT=latest
+ENV ANUBIS_GIT_COMMIT=${GIT_TAG}
+
 ARG NODE_VERSION=18
 FROM node:${NODE_VERSION}-bullseye-slim as base
 
@@ -149,6 +152,8 @@ RUN set -ex; \
     yarn theia download:plugins; \
     wget https://open-vsx.org/api/ms-python/python/${MS_PYTHON_VERSION}/file/ms-python.python-${MS_PYTHON_VERSION}.vsix -O /opt/theia/plugins/ms-python.python-${MS_PYTHON_VERSION}.vsix; \
     mkdir -p /opt/theia/plugins/ms-python.python; \
+    mkdir -p /etc/anubis/;
+    echo ${}
     unzip -d /opt/theia/plugins/ms-python.python /opt/theia/plugins/ms-python.python-${MS_PYTHON_VERSION}.vsix; \
     rm /opt/theia/plugins/ms-python.python-${MS_PYTHON_VERSION}.vsix; \
     sed -i 's/"ms-toolsai.jupyter,ms-python.vscode-pylance"/"ms-toolsai.jupyter"/' /opt/theia/plugins/ms-python.python/extension.vsixmanifest; \

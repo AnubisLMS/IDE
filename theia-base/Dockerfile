@@ -1,10 +1,10 @@
 # https://github.com/theia-ide/theia-apps/tree/master/theia-cpp-docker
 
-ARG ANUBIS_GIT_COMMIT=latest
-ENV ANUBIS_GIT_COMMIT=${GIT_TAG}
-
 ARG NODE_VERSION=18
 FROM node:${NODE_VERSION}-bullseye-slim as base
+
+ARG ANUBIS_GIT_COMMIT=latest
+ENV ANUBIS_GIT_COMMIT=${GIT_TAG}
 
 ARG DIST=bullseye
 ENV TZ=America/New_York \

@@ -4,7 +4,6 @@ FROM registry.digitalocean.com/anubis/theia-base:python-3.10 as theia
 USER root
 
 # Step for downloading any new extensions
-COPY latest.package.json package.json
 RUN set -ex; \
   code-server --user-data-dir=/opt/code-server --install-extension golang.Go
 

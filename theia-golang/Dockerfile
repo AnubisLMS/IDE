@@ -31,8 +31,6 @@ RUN set -ex; \
   go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
 	go install golang.org/x/tools/gopls@v0.7.3; \
   echo 'export GO111MODULE=on' >> .bashrc; \
-  sed -i 's/"default": "goreturns"/"default": "goformat"/' \
-    /opt/theia/plugins/vscode-go/extension/package.json; \
   chown -R anubis:anubis /home/anubis
 
 COPY supervisord.conf /supervisord.conf

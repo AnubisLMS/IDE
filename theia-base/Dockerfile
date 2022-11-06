@@ -65,7 +65,8 @@ RUN set -ex; \
       libsqlite3-dev libssl-dev openssl \
       libsecret-1-0 libsecret-1-dev sqlite3 libbz2-dev bzip2 fzf \
       nano htop less mariadb-client openssh-client pigz procps \
-      docker-ce-cli docker-compose-plugin docker-ctop libncurses6 libncurses-dev; \
+      docker-ce-cli docker-compose-plugin docker-ctop libncurses6 libncurses-dev \
+      fontconfig fonts-font-awesome; \
     apt remove -y python python-pip python3-pip python3; \
     cd /; \
     \
@@ -116,6 +117,7 @@ RUN set -ex; \
     chown -R anubis:anubis /home/anubis; \
     \
     `# Cleanup`  \
+    fc-cache -f; \
     apt remove -y libffi-dev libexpat1-dev \
       libgdbm-dev liblzma-dev zlib1g-dev; \
     apt autoclean -y; \
@@ -144,21 +146,23 @@ RUN set -ex; \
     rm /code-server_${CODE_SERVER_VERSION}_amd64.deb; \
     \
     `# Disable insecure warning`; \
-    sed -i 's/window.isSecureContext||/false&&/' /usr/lib/code-server/lib/vscode/out/vs/workbench/workbench.web.main.js; \
+    sed -i 's/window.isSecureContext||/false&&/' \
+      /usr/lib/code-server/lib/vscode/out/vs/workbench/workbench.web.main.js; \
+    \
+    `# Enable fontawesome css in CSP` \
+    sed -i "s/style-src 'self' 'unsafe-inline'/style-src 'self' 'unsafe-inline' https:\/\/use.fontawesome.com/" \
+      /usr/lib/code-server/lib/vscode/out/vs/server/node/server.main.js; \
     \
     `# Insert heartbeat script`; \
     SCRIPT_LINE='<script>function ping(){if (document.hasFocus()){fetch("/ide/ping")}};document.addEventListener("focus",ping);setInterval(ping,60000)</script>'; \
+    FONTAWESOME_LINE='<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">'; \
     HEAD_LINE_NUMBER=$(grep -n '</head>' ${CODE_SERVER_INDEX} | cut -f1 -d:); \
     sed -i "${HEAD_LINE_NUMBER}i${SCRIPT_LINE}" ${CODE_SERVER_INDEX}; \
+    sed -i "${HEAD_LINE_NUMBER}i${FONTAWESOME_LINE}" ${CODE_SERVER_INDEX}; \
     \
     `# Install Extensions`; \
     code-server --user-data-dir=/opt/code-server --install-extension ms-python.python; \
     code-server --user-data-dir=/opt/code-server --install-extension eamodio.gitlens; \
-    code-server --user-data-dir=/opt/code-server --install-extension webfreak.debug; \
-    code-server --user-data-dir=/opt/code-server --install-extension ms-vscode.cmake-tools; \
-    code-server --user-data-dir=/opt/code-server --install-extension eclipse-cdt.cdt-gdb-vscode; \
-    code-server --user-data-dir=/opt/code-server --install-extension 13xforever.language-x86-64-assembly; \
-    code-server --user-data-dir=/opt/code-server --install-extension llvm-vs-code-extensions.vscode-clangd; \
     \
     `# Cleanup`; \
     apt autoclean -y; \
@@ -170,7 +174,7 @@ RUN set -ex; \
     find / -depth \
       \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
       -exec 'rm' '-rf' '{}' '+';  \
-    chown -R anubis:anubis /opt/code-server; \
+    chown -R ${USER}:${USER} /opt/code-server /home/${USER}; \
     find /opt/code-server -type f -exec chmod -R 644 \{\} \; ; \
     find /opt/code-server -type d -exec chmod -R 755 \{\} \;
 

@@ -10,10 +10,17 @@ ARG WEBTOP=OFF
 # Step for downloading any new extensions
 RUN set -ex; \
   if [ "${WEBTOP}" = "OFF" ]; then  \
+    \
+    `# Install extensions` \
+    code-server --user-data-dir=/opt/code-server --install-extension ms-vscode.cmake-tools; \
+    code-server --user-data-dir=/opt/code-server --install-extension llvm-vs-code-extensions.vscode-clangd; \
+    code-server --user-data-dir=/opt/code-server --install-extension webfreak.debug; \
+    code-server --user-data-dir=/opt/code-server --install-extension 13xforever.language-x86-64-assembly; \
     code-server --user-data-dir=/opt/code-server --install-extension haskell.haskell; \
     code-server --user-data-dir=/opt/code-server --install-extension mshr-h.veriloghdl; \
     code-server --user-data-dir=/opt/code-server --install-extension elixir-lsp.elixir-ls; \
     code-server --user-data-dir=/opt/code-server --install-extension golang.Go; \
+    \
   fi
 
 ENV GO_VERSION=1.19 \

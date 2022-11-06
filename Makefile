@@ -4,7 +4,7 @@ export GIT_TAG
 
 # Theia IDES
 THEIA_BASE_IDE := \
-	theia-base-38 theia-base-39 theia-base-310 theia-base-3.11
+	theia-base-38 theia-base-39 theia-base-310 theia-base-311
 
 THEIA_IDES := \
 	theia-cpp theia-admin theia-golang \

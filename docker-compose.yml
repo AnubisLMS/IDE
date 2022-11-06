@@ -24,44 +24,13 @@ services:
       args:
         PY_VERSION: '3.10.6'
         BUILD_THEIA: 'ON'
-#  theia-base-311:
-#    image: registry.digitalocean.com/anubis/theia-base:python-3.11
-#    build:
-#      context: ./theia-base
-#      args:
-#        PY_VERSION: '3.11.0rc1'
-#        BUILD_THEIA: 'ON'
-
-  ## Bare theia IDE base images (IDE not built)
-  theia-base-38-bare:
-    image: registry.digitalocean.com/anubis/theia-base:python-3.8-bare
+  theia-base-311:
+    image: registry.digitalocean.com/anubis/theia-base:python-3.11
     build:
       context: ./theia-base
       args:
-        PY_VERSION: '3.8.13'
-        BUILD_THEIA: 'OFF'
-  theia-base-39-bare:
-    image: registry.digitalocean.com/anubis/theia-base:python-3.9-bare
-    build:
-      context: ./theia-base
-      args:
-        PY_VERSION: '3.9.13'
-        BUILD_THEIA: 'OFF'
-  theia-base-310-bare:
-    image: registry.digitalocean.com/anubis/theia-base:python-3.10-bare
-    build:
-      context: ./theia-base
-      args:
-        PY_VERSION: '3.10.6'
-        BUILD_THEIA: 'OFF'
-#  theia-base-311-bare:
-#    image: registry.digitalocean.com/anubis/theia-base:python-3.11-bare
-#    build:
-#      context: ./theia-base
-#      args:
-#        PY_VERSION: '3.11.0rc1'
-#        BUILD_THEIA: 'OFF'
-
+        PY_VERSION: '3.11.0'
+        BUILD_THEIA: 'ON'
   ## Webtop base images
   webtop-base-38:
     image: registry.digitalocean.com/anubis/webtop-base:python-3.8
@@ -84,13 +53,13 @@ services:
       dockerfile: Dockerfile-webtop
       args:
         PY_VERSION: '3.10.6'
-#  webtop-base-311:
-#    image: registry.digitalocean.com/anubis/webtop-base:python-3.11
-#    build:
-#      context: ./theia-base
-#      dockerfile: Dockerfile-webtop
-#      args:
-#        PY_VERSION: '3.11.0rc1'
+  webtop-base-311:
+    image: registry.digitalocean.com/anubis/webtop-base:python-3.11
+    build:
+      context: ./theia-base
+      dockerfile: Dockerfile-webtop
+      args:
+        PY_VERSION: '3.11.0rc1'
 
   ## General IDE images
   theia-golang:

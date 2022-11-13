@@ -131,7 +131,7 @@ RUN set -ex; \
     rm -rf /var/cache/apt/*; \
     rm -rf /var/lib/apt/lists/*; \
     rm -rf /home/node/*; \
-    find / -depth \
+    find /usr /home /var -depth \
       \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
       -exec 'rm' '-rf' '{}' '+';
 
@@ -180,7 +180,7 @@ RUN set -ex; \
     rm -rf /usr/share/doc; \
     rm -rf /var/lib/apt/lists/*; \
     rm -rf /home/node/*; \
-    find / -depth \
+    find /usr /home /var -depth \
       \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
       -exec 'rm' '-rf' '{}' '+';  \
   fi

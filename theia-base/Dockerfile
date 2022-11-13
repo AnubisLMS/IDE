@@ -154,8 +154,6 @@ RUN set -ex; \
     mkdir -p /opt/theia/plugins/ms-python.python; \
     unzip -d /opt/theia/plugins/ms-python.python /opt/theia/plugins/ms-python.python-${MS_PYTHON_VERSION}.vsix; \
     rm /opt/theia/plugins/ms-python.python-${MS_PYTHON_VERSION}.vsix; \
-    mkdir -p /etc/anubis/COMMIT; \
-    echo ${ANUBIS_GIT_COMMIT} > /etc/anubis/COMMIT; \
     sed -i 's/"ms-toolsai.jupyter,ms-python.vscode-pylance"/"ms-toolsai.jupyter"/' /opt/theia/plugins/ms-python.python/extension.vsixmanifest; \
     sed -i '122 s/.*/    match = re.match(r"(\\d+)(?:\\.(\\d+)(?:\\.\\d+)?)?$", version)/' /opt/theia/plugins/ms-python.python/extension/pythonFiles/lib/python/parso/utils.py; \
     wget https://raw.githubusercontent.com/davidhalter/parso/master/parso/python/grammar39.txt -O /opt/theia/plugins/ms-python.python/extension/pythonFiles/lib/python/parso/python/grammar39.txt; \
@@ -186,6 +184,8 @@ RUN set -ex; \
 
 # PRETTY SHELL NECESSARY
 RUN set -ex; \
+  mkdir -p /etc/anubis/COMMIT; \
+  echo ${ANUBIS_GIT_COMMIT} > /etc/anubis/COMMIT; \
   mkdir -p /etc/anubis/skel/; \
   mkdir -p /etc/anubis/init.d/; \
   chsh -s /usr/bin/zsh ${USER}; \

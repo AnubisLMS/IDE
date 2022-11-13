@@ -152,7 +152,6 @@ RUN set -ex; \
     yarn theia download:plugins; \
     wget https://open-vsx.org/api/ms-python/python/${MS_PYTHON_VERSION}/file/ms-python.python-${MS_PYTHON_VERSION}.vsix -O /opt/theia/plugins/ms-python.python-${MS_PYTHON_VERSION}.vsix; \
     mkdir -p /opt/theia/plugins/ms-python.python; \
-    echo ${} \
     unzip -d /opt/theia/plugins/ms-python.python /opt/theia/plugins/ms-python.python-${MS_PYTHON_VERSION}.vsix; \
     mkdir -p /etc/anubis/COMMIT; \
     echo ${ANUBIS_GIT_COMMIT} > /etc/anubis/COMMIT; \

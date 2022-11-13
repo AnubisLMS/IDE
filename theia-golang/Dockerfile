@@ -18,7 +18,6 @@ RUN set -ex; \
   cd /home/anubis; \
   mkdir -p $GOROOT; \
   mkdir -p $GOPATH; \
-  chown -R anubis:anubis $GOROOT; \
   curl -fsSL https://storage.googleapis.com/golang/go$GO_VERSION.$GOOS-$GOARCH.tar.gz | tar -C $(dirname $GOROOT) -xzv; \
   cd /home/anubis; \
   go install github.com/uudashr/gopkgs/cmd/gopkgs@v2; \
@@ -31,7 +30,8 @@ RUN set -ex; \
   go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
 	go install golang.org/x/tools/gopls@v0.7.3; \
   echo 'export GO111MODULE=on' >> .bashrc; \
-  chown -R anubis:anubis /home/anubis
+  chown -R anubis:anubis /home/anubis; \
+  chown -R anubis:anubis $GOPATH
 
 COPY supervisord.conf /supervisord.conf
 USER anubis

@@ -184,10 +184,10 @@ RUN set -ex; \
 
 # PRETTY SHELL NECESSARY
 RUN set -ex; \
-  mkdir -p /etc/anubis/COMMIT; \
-  echo ${ANUBIS_GIT_COMMIT} > /etc/anubis/COMMIT; \
   mkdir -p /etc/anubis/skel/; \
   mkdir -p /etc/anubis/init.d/; \
+  mkdir -p /etc/anubis/commit/; \
+  echo ${ANUBIS_GIT_COMMIT} > /etc/anubis/commit/anubis_commit.txt; \
   chsh -s /usr/bin/zsh ${USER}; \
   git clone https://github.com/robbyrussell/oh-my-zsh.git /opt/oh-my-zsh; \
   git clone https://github.com/Aloxaf/fzf-tab.git /opt/oh-my-zsh/custom/plugins/fzf-tab; \

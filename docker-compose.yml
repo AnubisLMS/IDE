@@ -11,7 +11,7 @@ services:
         PY_VERSION: '3.8.13'
         BUILD_THEIA: 'ON'
     environment:
-      ANUBIS_GIT_COMMIT: "${GIT_TAG:-latest}"
+      - "ANUBIS_GIT_COMMIT=${GIT_TAG:-latest}"
   theia-base-39:
     image: registry.digitalocean.com/anubis/theia-base:python-3.9
     build:
@@ -20,7 +20,7 @@ services:
         PY_VERSION: '3.9.13'
         BUILD_THEIA: 'ON'
     environment:
-      ANUBIS_GIT_COMMIT: "${GIT_TAG:-latest}"
+      - "ANUBIS_GIT_COMMIT=${GIT_TAG:-latest}"
   theia-base-310:
     image: registry.digitalocean.com/anubis/theia-base:python-3.10
     build:
@@ -29,7 +29,7 @@ services:
         PY_VERSION: '3.10.6'
         BUILD_THEIA: 'ON'
     environment:
-      ANUBIS_GIT_COMMIT: "${GIT_TAG:-latest}"
+      - "ANUBIS_GIT_COMMIT=${GIT_TAG:-latest}"
 #  theia-base-311:
 #    image: registry.digitalocean.com/anubis/theia-base:python-3.11
 #    build:

@@ -155,10 +155,8 @@ RUN set -ex; \
     \
     `# Insert heartbeat script`; \
     SCRIPT_LINE='<script>function ping(){if (document.hasFocus()){fetch("/ide/ping")}};document.addEventListener("focus",ping);setInterval(ping,60000)</script>'; \
-    FONTAWESOME_LINE='<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">'; \
     HEAD_LINE_NUMBER=$(grep -n '</head>' ${CODE_SERVER_INDEX} | cut -f1 -d:); \
     sed -i "${HEAD_LINE_NUMBER}i${SCRIPT_LINE}" ${CODE_SERVER_INDEX}; \
-    sed -i "${HEAD_LINE_NUMBER}i${FONTAWESOME_LINE}" ${CODE_SERVER_INDEX}; \
     \
     `# Install Extensions`; \
     code-server --user-data-dir=/opt/code-server --install-extension ms-python.python; \

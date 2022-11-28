@@ -31,6 +31,8 @@ RUN set -ex; \
     go install github.com/go-delve/delve/cmd/dlv@latest; \
     go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
     go install golang.org/x/tools/gopls@v0.7.3; \
+    go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26; \
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1; \
     echo 'export GO111MODULE=on' >> .bashrc; \
     chown -R anubis:anubis /home/anubis; \
     chown -R anubis:anubis $GOPATH; \

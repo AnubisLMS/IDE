@@ -178,21 +178,20 @@ RUN set -ex; \
 
 # PRETTY SHELL NECESSARY
 RUN set -ex; \
-  mkdir -p /etc/anubis/skel/; \
-  mkdir -p /etc/anubis/init.d/; \
-  chsh -s /usr/bin/zsh ${USER}; \
-  git clone https://github.com/robbyrussell/oh-my-zsh.git /opt/oh-my-zsh; \
-  git clone https://github.com/Aloxaf/fzf-tab.git /opt/oh-my-zsh/custom/plugins/fzf-tab; \
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git /opt/oh-my-zsh/custom/plugins/zsh-syntax-highlighting; \
-  git clone https://github.com/zsh-users/zsh-autosuggestions.git /opt/oh-my-zsh/custom/plugins/zsh-autosuggestions;
+    mkdir -p /etc/anubis/skel/; \
+    mkdir -p /etc/anubis/init.d/; \
+    chsh -s /usr/bin/zsh ${USER}; \
+    git clone https://github.com/robbyrussell/oh-my-zsh.git /opt/oh-my-zsh; \
+    git clone https://github.com/Aloxaf/fzf-tab.git /opt/oh-my-zsh/custom/plugins/fzf-tab; \
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git /opt/oh-my-zsh/custom/plugins/zsh-syntax-highlighting; \
+    git clone https://github.com/zsh-users/zsh-autosuggestions.git /opt/oh-my-zsh/custom/plugins/zsh-autosuggestions;
 COPY zshrc /etc/anubis/skel/.zshrc
 COPY anubis.zsh-theme /opt/oh-my-zsh/custom/themes/anubis.zsh-theme
 
 # Anubis CLI
 RUN set -eux; \
-  git clone https://github.com/AnubisLMS/CLI.git /cli; \
-  pip3 install --no-cache-dir /cli; \
-  rm -rf /cli
+    pip3 install --no-cache-dir git+https://github.com/AnubisLMS/CLI; \
+    pip3 install --no-cache-dir git+https://github.com/AnubisLMS/Anubis.git#subdirectory=theia/autograde;
 
 COPY motd.txt /etc/motd
 COPY supervisord.conf initialize-ide.py /

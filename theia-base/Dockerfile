@@ -158,6 +158,10 @@ RUN set -ex; \
     HEAD_LINE_NUMBER=$(grep -n '</head>' ${CODE_SERVER_INDEX} | cut -f1 -d:); \
     sed -i "${HEAD_LINE_NUMBER}i${SCRIPT_LINE}" ${CODE_SERVER_INDEX}; \
     \
+    `# Disable the insanely annoying bash shell integration`; \
+    sed -i '1ireturn' /usr/lib/code-server/lib/vscode/out/vs/workbench/contrib/terminal/browser/media/shellIntegration-bash.sh; \
+    sed -i '1isource ~/.bashrc' /usr/lib/code-server/lib/vscode/out/vs/workbench/contrib/terminal/browser/media/shellIntegration-bash.sh; \
+    \
     `# Install Extensions`; \
     code-server --user-data-dir=/opt/code-server --install-extension ms-python.python; \
     code-server --user-data-dir=/opt/code-server --install-extension eamodio.gitlens; \
@@ -194,8 +198,8 @@ RUN set -eux; \
     pip3 install --no-cache-dir git+https://github.com/AnubisLMS/Anubis.git#subdirectory=theia/autograde;
 
 COPY motd.txt /etc/motd
-COPY supervisord.conf initialize-ide.py /
+COPY docker-entrypoint.sh supervisord.conf initialize-ide.py /
 
 USER ${USER}
 WORKDIR /opt/anubis
-ENTRYPOINT ["/usr/local/bin/supervisord", "--nodaemon", "-c", "/supervisord.conf"]
+ENTRYPOINT ["/docker-entrypoint.sh"]

@@ -180,6 +180,18 @@ RUN set -ex; \
     find /opt/code-server -type f -exec chmod -R 644 \{\} \; ; \
     find /opt/code-server -type d -exec chmod -R 755 \{\} \;
 
+# Build & add jepst bash (jbash)
+RUN set -eux; \
+    cd /; \
+    git clone https://github.com/jepst/bash.git; \
+    cd bash; \
+    ./configure; \
+    make -j $(nproc); \
+    chmod +x bash; \
+    mv bash /usr/local/bin/jbash; \
+    cd ../; \
+    rm -rf bash
+
 # PRETTY SHELL NECESSARY
 RUN set -ex; \
     mkdir -p /etc/anubis/skel/; \

@@ -31,6 +31,7 @@ ENV PY_VERSION=$PY_VERSION \
     ANUBIS_RUN_DOCKERD="0"
 
 WORKDIR /opt/code-server
+VOLUME /log
 
 # Setup high level dependencies (mainly python)
 RUN set -ex; \

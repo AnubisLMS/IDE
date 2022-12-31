@@ -60,7 +60,7 @@ RUN set -ex; \
     \
     apt-get update; \
     apt-get install -y --no-install-recommends \
-      git curl wget build-essential tree clangd zsh exa locales \
+      git curl wget build-essential tree clangd zsh exa locales zip unzip \
       libffi-dev libexpat1-dev \
       libgdbm-dev liblzma-dev zlib1g-dev \
       libsqlite3-dev libssl-dev openssl \

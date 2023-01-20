@@ -123,6 +123,7 @@ RUN set -ex; \
       libgdbm-dev liblzma-dev zlib1g-dev; \
     apt autoclean -y; \
     apt autoremove -y; \
+    apt install -y zip unzip; \
     rm -rf /tmp/*; \
     rm -rf /usr/share/doc; \
     rm -rf /var/cache/apt/*; \
@@ -169,7 +170,6 @@ RUN set -ex; \
     \
     `# Cleanup`; \
     apt autoclean -y; \
-    apt autoremove -y; \
     rm -rf /tmp/*; \
     rm -rf /usr/share/doc; \
     rm -rf /var/lib/apt/lists/*; \

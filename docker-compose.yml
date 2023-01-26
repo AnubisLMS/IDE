@@ -70,6 +70,10 @@ services:
     image: registry.digitalocean.com/anubis/theia-cpp:latest
     build: ./theia-cpp
 
+  theia-procdesign:
+    image: registry.digitalocean.com/anubis/theia-procdesign:latest
+    build: ./theia-procdesign
+
   theia-admin:
     image: registry.digitalocean.com/anubis/theia-admin:latest
     build: ./theia-admin

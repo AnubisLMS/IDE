@@ -7,7 +7,7 @@ THEIA_BASE_IDE := \
 	theia-base-38 theia-base-39 theia-base-310 theia-base-311
 
 THEIA_IDES := \
-	theia-cpp theia-admin theia-golang \
+	theia-cpp theia-procdesign theia-admin theia-golang \
 	theia-flask-39 theia-flask-310 \
 	theia-mysql-39 theia-mysql-310 \
 	theia-devops theia-jepst
@@ -43,6 +43,14 @@ push-base-ides:
 .PHONY: push-ides       # Push ide images to registry.digitalocean.com
 push-ides:
 	docker compose push $(THEIA_IDES)
+
+.PHONY: pull-base-ides  # Pull base ide images to registry.digitalocean.com
+pull-base-ides:
+	docker compose pull $(THEIA_BASE_IDE)
+
+.PHONY: pull-ides       # Pull ide images to registry.digitalocean.com
+pull-ides:
+	docker compose pull $(THEIA_IDES)
 
 .PHONY: prop-ides       # Create theia-prop daemonset to propagate latest ide images
 prop-ides:

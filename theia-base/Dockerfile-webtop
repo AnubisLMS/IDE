@@ -88,7 +88,7 @@ RUN set -eux; \
     libsqlite3-dev libssl-dev openssl \
     libsecret-1-0 sqlite3 libbz2-dev bzip2 fzf tk tk-dev \
     nano htop less mariadb-client openssh-client pigz procps \
-    docker-ce-cli docker-compose-plugin libncurses6 libncurses-dev; \
+    docker-ce-cli docker-compose-plugin libncurses6 libncurses-dev vi vim; \
   apt-get remove -y python python-pip python3-pip python3; \
   cd /; \
   \

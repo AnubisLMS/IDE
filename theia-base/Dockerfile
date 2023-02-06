@@ -123,7 +123,7 @@ RUN set -ex; \
       libgdbm-dev liblzma-dev zlib1g-dev; \
     apt autoclean -y; \
     apt autoremove -y; \
-    apt install -y zip unzip; \
+    apt install -y --no-install-recommends zip unzip man manpages; \
     rm -rf /tmp/*; \
     rm -rf /usr/share/doc; \
     rm -rf /var/cache/apt/*; \

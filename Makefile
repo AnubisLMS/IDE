@@ -12,8 +12,10 @@ THEIA_IDES := \
 	theia-mysql-39 theia-mysql-310 \
 	theia-devops theia-jepst
 
+WEBTOP_BASE_IDES := \
+	webtop-base-310 webtop-base-39 webtop-base-38
+
 WEBTOP_IDES := \
-	webtop-base-310 webtop-base-311 webtop-base-38 webtop-base-3 \
 	webtop-jepst
 
 help:
@@ -62,5 +64,6 @@ prop-ides:
 
 webtop:
 	@echo 'building ide image'
+	docker compose build --parallel $(WEBTOP_BASE_IDES)
 	docker compose build --parallel $(WEBTOP_IDES)
-	docker compose push $(WEBTOP_IDES)
+	docker compose push $(WEBTOP_BASE_IDES) $(WEBTOP_IDES)

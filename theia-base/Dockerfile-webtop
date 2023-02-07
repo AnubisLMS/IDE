@@ -1,6 +1,8 @@
 # https://docs.linuxserver.io/images/docker-webtop
 
-ARG TAG=ubuntu-xfce
+# https://hub.docker.com/layers/linuxserver/webtop/ubuntu-xfce-01154bf8-ls75/images/sha256-533e2b2b3f63ae80fcf9a74c0c70453151bc85ee620644a4b79800e5972523d2?context=explore
+ARG TAG_VERSION=01154bf8-ls75
+ARG TAG=ubuntu-xfce-${TAG_VERSION}
 ARG BASE_IMAGE=lscr.io/linuxserver/webtop
 FROM $BASE_IMAGE:$TAG
 

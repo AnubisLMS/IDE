@@ -12,6 +12,10 @@ THEIA_IDES := \
 	theia-mysql-39 theia-mysql-310 \
 	theia-devops theia-jepst
 
+WEBTOP_IDES := \
+	webtop-base-310 webtop-base-311 webtop-base-38 webtop-base-3 \
+	webtop-jepst
+
 help:
 	@echo 'For convenience'
 	@echo
@@ -55,3 +59,8 @@ pull-ides:
 .PHONY: prop-ides       # Create theia-prop daemonset to propagate latest ide images
 prop-ides:
 	kubectl rollout restart ds anubis-theia-prop -n anubis
+
+webtop:
+	@echo 'building ide image'
+	docker compose build --parallel $(WEBTOP_IDES)
+	docker compose push $(WEBTOP_IDES)

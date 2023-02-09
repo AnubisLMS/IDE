@@ -27,7 +27,7 @@ RUN set -ex; \
     git make cmake strace \
     gcc-multilib g++-multilib libc6-dev \
     clangd clang-format qemu-system-i386 libgmp-dev libexpat-dev \
-    nasm; \
+    nasm spim bison flex; \
   cd /; \
   \
   `# Install extensions` \

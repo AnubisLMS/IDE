@@ -28,7 +28,8 @@ ENV PY_VERSION=$PY_VERSION \
     DOCKER_TLS_CERTDIR="/certs" \
     DOCKER_TLS_VERIFY="1" \
     DOCKER_CERT_PATH="/certs/client" \
-    ANUBIS_RUN_DOCKERD="0"
+    ANUBIS_RUN_DOCKERD="0" \
+    PATH="$PATH:/usr/games"
 
 WORKDIR /opt/code-server
 VOLUME /log
@@ -67,7 +68,7 @@ RUN set -ex; \
       libsecret-1-0 libsecret-1-dev sqlite3 libbz2-dev bzip2 fzf \
       nano htop less mariadb-client openssh-client pigz procps \
       docker-ce-cli docker-compose-plugin docker-ctop libncurses6 libncurses-dev \
-      fontconfig fonts-font-awesome; \
+      fontconfig fonts-font-awesome bastet; \
     apt remove -y python python-pip python3-pip python3; \
     cd /; \
     \
@@ -131,7 +132,14 @@ RUN set -ex; \
     rm -rf /home/node/*; \
     find / -depth \
       \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
-      -exec 'rm' '-rf' '{}' '+';
+      -exec 'rm' '-rf' '{}' '+'; \
+    \
+    `# Games`; \
+    ln -sf /usr/games/bastet /usr/local/bin/tetris \
+    \
+    `# logs`; \
+    mkdir -p /log; \
+    chown anubis:anubis /log
 
 # Build Theia Application
 ARG CODE_SERVER_VERSION=4.9.1

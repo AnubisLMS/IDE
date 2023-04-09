@@ -68,7 +68,7 @@ RUN set -ex; \
       libsecret-1-0 libsecret-1-dev sqlite3 libbz2-dev bzip2 fzf \
       nano htop less mariadb-client openssh-client pigz procps \
       docker-ce-cli docker-compose-plugin docker-ctop libncurses6 libncurses-dev \
-      fontconfig fonts-font-awesome bastet; \
+      fontconfig fonts-font-awesome; \
     apt remove -y python python-pip python3-pip python3; \
     cd /; \
     \
@@ -133,9 +133,6 @@ RUN set -ex; \
     find / -depth \
       \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
       -exec 'rm' '-rf' '{}' '+'; \
-    \
-    `# Games`; \
-    ln -sf /usr/games/bastet /usr/local/bin/tetris \
     \
     `# logs`; \
     mkdir -p /log; \
@@ -217,6 +214,39 @@ COPY anubis.zsh-theme /opt/oh-my-zsh/custom/themes/anubis.zsh-theme
 RUN set -eux; \
     pip3 install --no-cache-dir git+https://github.com/AnubisLMS/CLI; \
     pip3 install --no-cache-dir git+https://github.com/AnubisLMS/Anubis.git#subdirectory=theia/autograde;
+
+# Games
+RUN set -eux; \
+    apt update; \
+    \
+    `# Tetris `; \
+    apt install -y --no-install-recommends bastet; \
+    ln -sf /usr/games/bastet /usr/local/bin/tetris; \
+    \
+    `# Snake `; \
+    apt install -y --no-install-recommends nsnake; \
+    ln -sf /usr/games/nsnake /usr/local/bin/snake; \
+    \
+    `# moon-buggy`; \
+    apt install -y --no-install-recommends moon-buggy; \
+    ln -sf /usr/games/moon-buggy /usr/local/bin/moon-buggy; \
+    \
+    `# 2048`; \
+    mkdir -p /usr/local/src/; \
+    cd /usr/local/src/; \
+    git clone https://github.com/mevdschee/2048.c.git; \
+    cd 2048.c; \
+    make 2048; \
+    cp -p 2048 /usr/games/2048; \
+    cd ..; \
+    rm -rf 2048.c; \
+    ln -sf /usr/games/2048 /usr/local/bin/2048; \
+    \
+    `# Cleanup`; \
+    apt autoclean -y; \
+    rm -rf /tmp/*; \
+    rm -rf /usr/share/doc; \
+    rm -rf /var/lib/apt/lists/*;
 
 COPY motd.txt /etc/motd
 COPY docker-entrypoint.sh supervisord.conf initialize-ide.py /

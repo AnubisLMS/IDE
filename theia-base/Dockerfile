@@ -4,7 +4,7 @@ FROM debian:bullseye-slim as base
 
 ARG USER=anubis
 ARG DIST=bullseye
-ARG PY_VERSION=3.10.6
+ARG PY_VERSION=3.10.13
 
 ENV PY_VERSION=$PY_VERSION \
     TZ=America/New_York \
@@ -139,7 +139,7 @@ RUN set -ex; \
     chown anubis:anubis /log
 
 # Build Theia Application
-ARG CODE_SERVER_VERSION=4.9.1
+ARG CODE_SERVER_VERSION=4.16.1
 ARG CODE_SERVER_INDEX=/usr/lib/code-server/lib/vscode/out/vs/code/browser/workbench/workbench.html
 COPY config.yml /etc/anubis/config.yml
 COPY settings.json /opt/code-server/User/settings.json

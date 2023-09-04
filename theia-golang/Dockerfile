@@ -7,7 +7,7 @@ USER root
 RUN set -ex; \
   code-server --user-data-dir=/opt/code-server --install-extension golang.Go
 
-ENV GO_VERSION=1.19 \
+ENV GO_VERSION=1.21.0 \
   GOOS=linux \
   GOARCH=amd64 \
   GOROOT=/opt/go \

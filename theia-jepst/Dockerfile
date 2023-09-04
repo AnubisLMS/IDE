@@ -23,7 +23,7 @@ RUN set -ex; \
     \
   fi
 
-ENV GO_VERSION=1.19 \
+ENV GO_VERSION=1.21.0 \
   GOOS=linux \
   GOARCH=amd64 \
   GOROOT=/opt/go \

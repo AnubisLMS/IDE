@@ -110,6 +110,12 @@ services:
     image: registry.digitalocean.com/anubis/theia-devops:latest
     build: ./theia-devops
 
+  ## Course specific images
+  # Image for OSIRIS 
+  theia-osiris:
+    image: registry.digitalocean.com/anubis/theia-osiris:latest
+    build: ./theia-osiris
+
   # Image for CompArch & PL with Epstein
   theia-jepst:
     image: registry.digitalocean.com/anubis/theia-jepst:latest

@@ -111,7 +111,7 @@ services:
     build: ./theia-devops
 
   ## Course specific images
-  # Image for OSIRIS 
+  # Image for OSIRIS
   theia-osiris:
     image: registry.digitalocean.com/anubis/theia-osiris:latest
     build: ./theia-osiris

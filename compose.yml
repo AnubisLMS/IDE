@@ -116,6 +116,12 @@ services:
     image: registry.digitalocean.com/anubis/theia-osiris:latest
     build: ./theia-osiris
 
+  ## Course specific images
+  # Image for OSIRIS
+  theia-pincer:
+    image: registry.digitalocean.com/anubis/theia-pincer:latest
+    build: ./theia-pincer
+
   # Image for CompArch & PL with Epstein
   theia-jepst:
     image: registry.digitalocean.com/anubis/theia-jepst:latest

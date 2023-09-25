@@ -36,6 +36,8 @@ COPY --from=pincer-visx /pincer.vsix /opt/code-server/pincer.vsix
 
 USER root
 RUN set -ex; \
+  \
+  `# Basics for c / cpp development` \
   apt-get update; \
   apt-get install -y --no-install-recommends \
     git make cmake strace \
@@ -64,12 +66,15 @@ RUN set -ex; \
   cd ..; \
   rm -rf gdb-${GDB_VERSION}; \
   \
+  `# pwndbg` \
   echo 'set auto-load safe-path /' > /etc/anubis/skel/.gdbinit; \
   echo 'source /opt/pwndbg/gdbinit.py' >> /etc/anubis/skel/.gdbinit; \
   git clone https://github.com/pwndbg/pwndbg.git /opt/pwndbg; \
   cd /opt/pwndbg; \
   git submodule update --init --recursive; \
   pip3 install --no-cache-dir -e /opt/pwndbg; \
+  \
+  `# Cleanup` \
   rm -rf /tmp/*; \
   rm -rf /usr/share/doc; \
   rm -rf /var/lib/apt/lists/*; \

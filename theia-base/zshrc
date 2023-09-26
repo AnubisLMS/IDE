@@ -160,6 +160,9 @@ alias gitsh='git push'
 alias gitll='git pull'
 alias gitssh='git push --set-upstream origin $(git branch --show-current)'
 
+# docker
+alias dc='docker compose'
+
 alias ll='ls --color=auto -l'
 if which exa &> /dev/null; then
     alias la='exa -abghlT --ignore-glob=".bzr|CVS|.git|.hg|.svn|node_modules|__pycache__" --git'

@@ -146,6 +146,7 @@ alias rmr='rm -r'
 alias rmrf='rm -rf'
 alias cpr='cp -r'
 
+# git
 alias gits='git status -s'
 alias gita='git add'
 alias gitd='git diff'

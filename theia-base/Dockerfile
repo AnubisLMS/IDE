@@ -139,7 +139,7 @@ RUN set -ex; \
     chown anubis:anubis /log
 
 # Build Theia Application
-ARG CODE_SERVER_VERSION=4.16.1
+ARG CODE_SERVER_VERSION=4.17.0
 ARG CODE_SERVER_INDEX=/usr/lib/code-server/lib/vscode/out/vs/code/browser/workbench/workbench.html
 COPY config.yml /etc/anubis/config.yml
 COPY settings.json /opt/code-server/User/settings.json

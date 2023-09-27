@@ -10,7 +10,7 @@ THEIA_IDES := \
 	theia-cpp theia-procdesign theia-admin theia-golang \
 	theia-flask-39 theia-flask-310 \
 	theia-mysql-39 theia-mysql-310 \
-	theia-devops theia-jepst
+	theia-devops theia-jepst theia-osiris theia-pincer
 
 WEBTOP_BASE_IDES := \
 	webtop-base-310 webtop-base-39 webtop-base-38

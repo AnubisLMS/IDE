@@ -45,6 +45,12 @@ RUN set -eux; \
     unzip; \
   \
   if [ "$WEBTOP" = "ON" ]; then apt-get install -y --no-install-recommends gtkwave; fi; \
+  `# E20 utils`\
+  `wget https://vito.nyc/e20utils.zip;` \
+  `unzip e20utils.zip;` \
+  `chmod +x vea ved vem;` \
+  `mv -t /usr/local/bin vea ved vem;` \
+  `rm e20utils.zip;` \
   `# Haskell` \
   wget https://github.com/haskell/haskell-language-server/releases/download/1.5.1/haskell-language-server-Linux-9.0.1.gz; \
   gzip -d haskell-language-server-Linux-9.0.1.gz; \

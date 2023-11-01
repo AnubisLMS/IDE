@@ -13,26 +13,12 @@ RUN set -eux; \
     npx vsce package --out /webfreak-debug.vsix
 
 
-FROM node:16 as pincer-visx
-
-SHELL ["/bin/bash", "-c"]
-
-RUN set -eux; \
-    apt update; \
-    apt --assume-yes install git build-essential; \
-    git clone https://github.com/synoet/pincer.git; \
-    cd pincer/extension; \
-    npm clean-install --no-optional; \
-    npx vsce package --out /pincer.vsix
-
-
 FROM registry.digitalocean.com/anubis/theia-base:python-3.10 as theia
 
 ARG USER=anubis
 ARG GDB_VERSION=13.2
 
 COPY --from=code-debug-visx /webfreak-debug.vsix /opt/code-server/webfreak-debug.vsix
-COPY --from=pincer-visx /pincer.vsix /opt/code-server/pincer.vsix
 
 USER root
 RUN set -ex; \
@@ -53,8 +39,6 @@ RUN set -ex; \
   \
   `# Install built extensions` \
   code-server --user-data-dir=/opt/code-server --install-extension /opt/code-server/webfreak-debug.vsix; \
-  code-server --user-data-dir=/opt/code-server --install-extension /opt/code-server/pincer.vsix; \
-  \
   `# We compile our own gdb like this so that it does not install the system python3` \
   wget https://ftp.gnu.org/gnu/gdb/gdb-${GDB_VERSION}.tar.xz; \
   tar xJf gdb-${GDB_VERSION}.tar.xz; \
@@ -83,5 +67,7 @@ RUN set -ex; \
     \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
     -exec 'rm' '-rf' '{}' '+'; \
   chown -R ${USER}:${USER} /home/anubis
+
+COPY install_extension.sh /etc/anubis/init.d/install_extension.sh
 
 USER anubis

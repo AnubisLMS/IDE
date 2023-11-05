@@ -64,4 +64,8 @@ RUN set -ex; \
     -exec 'rm' '-rf' '{}' '+'; \
   chown -R ${USER}:${USER} /home/anubis
 
+RUN set -exu; \
+  chown -R ${USER}:${USER} /opt/code-server; \
+  chmod +w -R /opt/code-server
+
 USER anubis

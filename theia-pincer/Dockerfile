@@ -69,6 +69,8 @@ RUN set -ex; \
   chown -R ${USER}:${USER} /home/anubis
 
 COPY supervisord.conf /supervisord.conf
-COPY install_extension.sh /etc/anubis/init.d/install_extension.sh
+COPY install_extension.sh /opt/install_extension.sh
+
+RUN chmod +x /opt/install_extension.sh
 
 USER anubis

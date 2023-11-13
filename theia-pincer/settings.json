@@ -1,0 +1,9 @@
+{
+  "files.enableTrash": false,
+  "editor.autoSave": "on",
+  "terminal.integrated.cursorBlinking": true,
+  "workbench.colorTheme": "Visual Studio Dark",
+  "editor.tabCompletion": "on",
+  "editor.inlineCompletions": true,
+  "editor.inlineCompletionsAccessibilityVerbose": true
+}

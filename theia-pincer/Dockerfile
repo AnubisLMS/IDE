@@ -70,6 +70,8 @@ RUN set -ex; \
 
 COPY supervisord.conf /supervisord.conf
 COPY install_extension.sh /opt/install_extension.sh
+COPY settings.json /opt/code-server/User/settings.json
+
 
 RUN chmod +x /opt/install_extension.sh
 

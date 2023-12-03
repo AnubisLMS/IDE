@@ -115,6 +115,15 @@ services:
   theia-osiris:
     image: registry.digitalocean.com/anubis/theia-osiris:latest
     build: ./theia-osiris
+  
+  webtop-osiris:
+    image: registry.digitalocean.com/anubis/webtop-osiris:latest
+    build:
+      context: ./theia-osiris
+      args:
+        PY_VERSION: '3.10'
+        WEBTOP: 'ON'
+        BASE_IMAGE: registry.digitalocean.com/anubis/webtop-base:python-3.10
 
   ## Course specific images
   # Image for OSIRIS

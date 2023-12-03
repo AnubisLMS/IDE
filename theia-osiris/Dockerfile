@@ -1,5 +1,8 @@
 # https://github.com/theia-ide/theia-apps/tree/master/theia-cpp-docker
 
+ARG PY_VERSION=3.10
+ARG BASE_IMAGE=registry.digitalocean.com/anubis/theia-base:python-${PY_VERSION}
+
 FROM node:16 as vsix
 
 SHELL ["/bin/bash", "-c"]
@@ -12,8 +15,11 @@ RUN set -eux; \
     npm clean-install --no-optional; \
     npx vsce package --out /webfreak-debug.vsix
 
+FROM ${BASE_IMAGE} as theia
+USER root
 
-FROM registry.digitalocean.com/anubis/theia-base:python-3.10 as theia
+ARG USER=anubis
+ARG WEBTOP=OFF
 
 ARG USER=anubis
 ARG GDB_VERSION=13.2
@@ -30,11 +36,13 @@ RUN set -ex; \
     nasm spim bison flex aircrack-ng airgraph-ng; \
   cd /; \
   \
-  `# Install extensions` \
-  code-server --user-data-dir=/opt/code-server --install-extension ms-vscode.cmake-tools; \
-  code-server --user-data-dir=/opt/code-server --install-extension llvm-vs-code-extensions.vscode-clangd; \
-  code-server --user-data-dir=/opt/code-server --install-extension /opt/code-server/webfreak-debug.vsix; \
-  code-server --user-data-dir=/opt/code-server --install-extension 13xforever.language-x86-64-assembly; \
+  if [ "$WEBTOP" = "OFF" ]; then \
+    `# Install extensions` \
+    code-server --user-data-dir=/opt/code-server --install-extension ms-vscode.cmake-tools; \
+    code-server --user-data-dir=/opt/code-server --install-extension llvm-vs-code-extensions.vscode-clangd; \
+    code-server --user-data-dir=/opt/code-server --install-extension /opt/code-server/webfreak-debug.vsix; \
+    code-server --user-data-dir=/opt/code-server --install-extension 13xforever.language-x86-64-assembly; \
+  fi; \
   \
   `# We compile our own gdb like this so that it does not install the system python3` \
   wget https://ftp.gnu.org/gnu/gdb/gdb-${GDB_VERSION}.tar.xz; \
@@ -60,6 +68,23 @@ RUN set -ex; \
   git clone https://github.com/radareorg/radare2; \
   radare2/sys/install.sh --install; \
   cd /; \
+  \
+  `# iaito`; \
+  if [ "$WEBTOP" = "ON" ]; then \
+    `# iatio` \
+    apt update; \
+    apt install -y \ 
+      qttools5-dev qttools5-dev-tools qtbase5-dev qtchooser \
+      qt5-qmake qtbase5-dev-tools libqt5svg5-dev make pkg-config build-essential; \
+    cd /opt; \
+    git clone https://github.com/radareorg/iaito.git; \
+    cd iaito; \
+    ./configure; \
+    make PREFIX=/usr/local/; \
+    make install PREFIX=/usr/local/; \
+    cd /; \
+    rm -rf /opt/iaito; \
+  fi; \
   \
   `# pip install stuff` \
   pip install --no-cache-dir pwntools requests ipython scrapy; \

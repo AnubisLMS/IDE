@@ -16,7 +16,7 @@ WEBTOP_BASE_IDES := \
 	webtop-base-310 webtop-base-39 webtop-base-38
 
 WEBTOP_IDES := \
-	webtop-jepst
+	webtop-jepst webtop-osiris
 
 help:
 	@echo 'For convenience'

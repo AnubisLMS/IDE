@@ -53,6 +53,8 @@ RUN set -ex; \
   cd /opt/pwndbg; \
   git submodule update --init --recursive; \
   pip3 install --no-cache-dir -e /opt/pwndbg; \
+  touch /opt/pwndbg/.skip-venv; \
+  \
   rm -rf /tmp/*; \
   rm -rf /usr/share/doc; \
   rm -rf /var/lib/apt/lists/*; \

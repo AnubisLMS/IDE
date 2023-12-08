@@ -62,6 +62,7 @@ RUN set -ex; \
   cd /opt/pwndbg; \
   git submodule update --init --recursive; \
   pip3 install --no-cache-dir -e /opt/pwndbg; \
+  touch /opt/pwndbg/.skip-venv; \
   \
   `# radare2` \
   cd /opt; \
@@ -73,7 +74,7 @@ RUN set -ex; \
   if [ "$WEBTOP" = "ON" ]; then \
     `# iatio` \
     apt update; \
-    apt install -y \ 
+    apt install -y \
       qttools5-dev qttools5-dev-tools qtbase5-dev qtchooser \
       qt5-qmake qtbase5-dev-tools libqt5svg5-dev make pkg-config build-essential; \
     cd /opt; \
@@ -99,3 +100,4 @@ RUN set -ex; \
   chown -R ${USER}:${USER} /home/anubis
 
 USER anubis
+

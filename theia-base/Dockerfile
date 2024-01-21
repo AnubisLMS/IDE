@@ -10,7 +10,6 @@ ENV PY_VERSION=$PY_VERSION \
     TZ=America/New_York \
     PUID=1001 \
     GUID=1001 \
-    NODE_VERSION=$NODE_VERSION \
     TERM=xterm-256color \
     DEBIAN_FRONTEND=noninteractive \
     REPO_NAME="" \
@@ -139,7 +138,7 @@ RUN set -ex; \
     chown anubis:anubis /log
 
 # Build Theia Application
-ARG CODE_SERVER_VERSION=4.18.0
+ARG CODE_SERVER_VERSION=4.20.0
 ARG CODE_SERVER_INDEX=/usr/lib/code-server/lib/vscode/out/vs/code/browser/workbench/workbench.html
 COPY config.yml /etc/anubis/config.yml
 COPY settings.json /opt/code-server/User/settings.json

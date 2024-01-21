@@ -3,7 +3,7 @@
 ARG PY_VERSION=3.10
 ARG BASE_IMAGE=registry.digitalocean.com/anubis/theia-base:python-${PY_VERSION}
 
-FROM node:16 as vsix
+FROM node:18 as vsix
 
 SHELL ["/bin/bash", "-c"]
 

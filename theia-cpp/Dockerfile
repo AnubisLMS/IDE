@@ -1,6 +1,6 @@
 # https://github.com/theia-ide/theia-apps/tree/master/theia-cpp-docker
 
-FROM node:16 as vsix
+FROM node:18 as vsix
 
 SHELL ["/bin/bash", "-c"]
 

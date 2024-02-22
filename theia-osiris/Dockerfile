@@ -33,7 +33,8 @@ RUN set -ex; \
     git make cmake strace \
     gcc-multilib g++-multilib libc6-dev \
     clangd clang-format qemu-system-i386 libgmp-dev libexpat-dev \
-    nasm spim bison flex aircrack-ng airgraph-ng; \
+    nasm spim bison flex aircrack-ng airgraph-ng \
+    netcat-traditional; \
   cd /; \
   \
   if [ "$WEBTOP" = "OFF" ]; then \

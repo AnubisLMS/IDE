@@ -27,7 +27,7 @@ ARG GDB_VERSION=13.2
 COPY --from=vsix /webfreak-debug.vsix /opt/code-server/webfreak-debug.vsix
 COPY idafree.desktop /usr/share/applications/idafree.desktop
 
-RUN exit 0; set -ex; \
+RUN set -ex; \
   apt-get update; \
   apt-get install -y --no-install-recommends \
     git make cmake strace \

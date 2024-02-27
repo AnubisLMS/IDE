@@ -25,9 +25,9 @@ ARG USER=anubis
 ARG GDB_VERSION=13.2
 
 COPY --from=vsix /webfreak-debug.vsix /opt/code-server/webfreak-debug.vsix
+COPY idafree.desktop /usr/share/applications/idafree.desktop
 
-USER root
-RUN set -ex; \
+RUN exit 0; set -ex; \
   apt-get update; \
   apt-get install -y --no-install-recommends \
     git make cmake strace \
@@ -88,6 +88,17 @@ RUN set -ex; \
     rm -rf /opt/iaito; \
   fi; \
   \
+  `# ida free`; \
+  \
+  wget -O /idafree84_linux.run https://out7.hex-rays.com/files/idafree84_linux.run; \
+  chmod +x /idafree84_linux.run; \
+  echo 'ef8afd646ee7ca1f71ed10202c6c40033a03b935b71463aa27d9cc63193ea347  /idafree84_linux.run' sha256sum -c -; \
+  /idafree84_linux.run --mode unattended --prefix /opt/idafree-8.4; \
+  rm /idafree84_linux.run; \
+  apt install --yes libxkbcommon-x11-0 'libxcb*'; \
+  echo 'cp /usr/share/applications/idafree.desktop /home/anubis/Desktop/' >> /etc/cont-init.d/30-config; \
+  echo 'chown -R anubis:anubis /home/anubis' >> /etc/cont-init.d/30-config; \
+  \
   `# pip install stuff` \
   pip install --no-cache-dir pwntools requests ipython scrapy; \
   \
@@ -98,7 +109,6 @@ RUN set -ex; \
   find / -depth \
     \( -name .cache -o -name __pycache__ -o -name '*.pyc' -o -name .git -o -name .github \) \
     -exec 'rm' '-rf' '{}' '+'; \
-  chown -R ${USER}:${USER} /home/anubis
+  chown -R ${USER}:${USER} /home/anubis;
 
-USER anubis
 

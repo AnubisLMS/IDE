@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=IDA Free
+Comment=IDA Free
+GenericName=Text Editor
+Exec=/opt/idafree-8.4/ida64
+Icon=/opt/idafree-8.4/appico64.png
+Type=Application
+StartupNotify=false
+Categories=TextEditor;Development;IDE;
+Keywords=idafree;

@@ -14,7 +14,11 @@ ENV TZ=America/New_York \
     GUID=1001 \
     KEYBOARD=en-us-qwerty \
     CUSTOM_PORT=5000 \
-    DEBIAN_FRONTEND=noninteractive
+    DEBIAN_FRONTEND=noninteractive \
+    DOCKER_HOST="tcp://localhost:2376" \
+    DOCKER_TLS_CERTDIR="/certs" \
+    DOCKER_TLS_VERIFY="1" \
+    DOCKER_CERT_PATH="/certs/client"
 
 # Webtop setup
 RUN set -eux; \
@@ -185,6 +189,13 @@ RUN set -eux; \
   git clone https://github.com/AnubisLMS/AnubisCLI.git /cli; \
   pip3 install --no-cache-dir /cli; \
   rm -rf /cli;
+
+# Force docker environment
+RUN set -eux; \
+    echo 'export DOCKER_HOST="tcp://localhost:2376"' >> /etc/anubis/skel/.xsessionrc; \
+    echo 'export DOCKER_TLS_CERTDIR="/certs"' >> /etc/anubis/skel/.xsessionrc; \
+    echo 'export DOCKER_TLS_VERIFY="1"' >> /etc/anubis/skel/.xsessionrc; \
+    echo 'export DOCKER_CERT_PATH="/certs/client"' >> /etc/anubis/skel/.xsessionrc
 
 COPY 30-config /etc/cont-init.d/30-config
 COPY code.desktop /usr/share/applications/code.desktop

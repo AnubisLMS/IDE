@@ -39,7 +39,7 @@ RUN set -ex; \
     apt upgrade -y; \
     apt-get install -y --no-install-recommends \
       wget gpg gnupg apt-transport-https ca-certificates  \
-      apt-utils pkg-config curl lsb-release; \
+      apt-utils pkg-config curl lsb-release autoconf; \
     \
     `# Add LLVM to apt`  \
     wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -; \
@@ -249,6 +249,29 @@ RUN set -eux; \
 
 COPY motd.txt /etc/motd
 COPY docker-entrypoint.sh supervisord.conf initialize-ide.py /
+
+ENV K9S_VERSION=v0.32.3 MINIKUBE_HOME=/minikube
+
+RUN set -eux; \
+    \
+    `# minikube`; \
+    mkdir -p /minikube; \
+    chown anubis:anubis /minikube; \
+    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64; \
+    install minikube-linux-amd64 /usr/local/bin/minikube; \
+    rm -f minikube-linux-amd64; \
+    chmod +x /usr/local/bin/minikube; \
+    \
+    `# kubectl` \
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"; \
+    install kubectl /usr/local/bin/kubectl; \
+    chmod +x /usr/local/bin/kubectl; \
+    rm kubectl; \
+    \
+    `# k9s`; \
+    wget https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_linux_amd64.deb; \
+    dpkg -i k9s_linux_amd64.deb
+
 
 USER ${USER}
 WORKDIR /opt/anubis

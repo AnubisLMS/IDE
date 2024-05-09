@@ -16,7 +16,7 @@ RUN set -eux; \
 FROM registry.digitalocean.com/anubis/theia-base:python-3.10 as theia
 
 ARG USER=anubis
-ARG GDB_VERSION=13.2
+ARG GDB_VERSION=14.1
 
 COPY --from=vsix /webfreak-debug.vsix /opt/code-server/webfreak-debug.vsix
 
@@ -27,7 +27,8 @@ RUN set -ex; \
     git make cmake strace \
     gcc-multilib g++-multilib libc6-dev \
     clangd clang-format qemu-system-i386 libgmp-dev libexpat-dev \
-    nasm spim bison flex; \
+    nasm spim bison flex \
+    libgmp-dev libmpfr-dev; \
   cd /; \
   \
   `# Install extensions` \

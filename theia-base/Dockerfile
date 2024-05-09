@@ -1,9 +1,9 @@
 # https://github.com/theia-ide/theia-apps/tree/master/theia-cpp-docker
 
-FROM debian:bullseye-slim as base
+FROM debian:bookworm-slim as base
 
 ARG USER=anubis
-ARG DIST=bullseye
+ARG DIST=bookworm
 ARG PY_VERSION=3.10.13
 
 ENV PY_VERSION=$PY_VERSION \
@@ -137,8 +137,9 @@ RUN set -ex; \
     mkdir -p /log; \
     chown anubis:anubis /log
 
-# Build Theia Application
-ARG CODE_SERVER_VERSION=4.20.0
+# Build code-server Application
+# https://github.com/coder/code-server/releases
+ARG CODE_SERVER_VERSION=4.89.0
 ARG CODE_SERVER_INDEX=/usr/lib/code-server/lib/vscode/out/vs/code/browser/workbench/workbench.html
 COPY config.yml /etc/anubis/config.yml
 COPY settings.json /opt/code-server/User/settings.json
@@ -250,7 +251,8 @@ RUN set -eux; \
 COPY motd.txt /etc/motd
 COPY docker-entrypoint.sh supervisord.conf initialize-ide.py /
 
-ENV K9S_VERSION=v0.32.3 MINIKUBE_HOME=/minikube
+# https://github.com/derailed/k9s/releases
+ENV K9S_VERSION=v0.32.4 MINIKUBE_HOME=/minikube
 
 RUN set -eux; \
     \

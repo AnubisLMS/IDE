@@ -4,7 +4,7 @@ FROM debian:trixie-slim as base
 
 ARG USER=anubis
 ARG DIST=bullseye
-ARG PY_VERSION=3.10.13
+ARG PY_VERSION=3.13.7
 
 ENV PY_VERSION=$PY_VERSION \
     TZ=America/New_York \

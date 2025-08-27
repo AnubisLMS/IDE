@@ -46,7 +46,7 @@ RUN set -eux; \
   set +eu; \
   find /etc -type f -exec 'sed' '-i' 's/abc/anubis/g' '{}' ';';
 
-ARG PY_VERSION=3.10.6
+ARG PY_VERSION=3.13.7
 ENV PY_VERSION=$PY_VERSION \
     NODE_VERSION=$NODE_VERSION \
     TERM=xterm-256color \

@@ -13,7 +13,7 @@ RUN set -eux; \
     npx vsce package --out /webfreak-debug.vsix
 
 
-FROM registry.digitalocean.com/anubis/theia-base:python-3.10 as theia
+FROM registry.digitalocean.com/anubis/theia-base:python-3.13 as theia
 
 ARG USER=anubis
 ARG GDB_VERSION=14.1

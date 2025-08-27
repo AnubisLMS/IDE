@@ -1,4 +1,4 @@
-FROM registry.digitalocean.com/anubis/theia-base:python-3.10 as theia
+FROM registry.digitalocean.com/anubis/theia-base:python-3.13 as theia
 
 ENV DOCKER_CONFIG="/docker/"
 

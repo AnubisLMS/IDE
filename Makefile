@@ -4,12 +4,12 @@ export GIT_TAG
 
 # Theia IDES
 THEIA_BASE_IDE := \
-	theia-base-38 theia-base-39 theia-base-310 theia-base-311
+	theia-base-310 theia-base-311 theia-base-312 theia-base-313
 
 THEIA_IDES := \
 	theia-cpp theia-procdesign theia-admin theia-golang \
-	theia-flask-39 theia-flask-310 \
-	theia-mysql-39 theia-mysql-310 \
+	theia-flask-310 \
+	theia-mysql-310 \
 	theia-devops theia-osiris theia-pincer
 
 WEBTOP_BASE_IDES := \

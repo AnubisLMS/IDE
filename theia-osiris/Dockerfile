@@ -1,9 +1,9 @@
 # https://github.com/theia-ide/theia-apps/tree/master/theia-cpp-docker
 
-ARG PY_VERSION=3.10
+ARG PY_VERSION=3.13
 ARG BASE_IMAGE=registry.digitalocean.com/anubis/theia-base:python-${PY_VERSION}
 
-FROM node:18 as vsix
+FROM node:24 as vsix
 
 SHELL ["/bin/bash", "-c"]
 
@@ -22,7 +22,7 @@ ARG USER=anubis
 ARG WEBTOP=OFF
 
 ARG USER=anubis
-ARG GDB_VERSION=13.2
+ARG GDB_VERSION=16.3
 
 COPY --from=vsix /webfreak-debug.vsix /opt/code-server/webfreak-debug.vsix
 COPY idafree.desktop /usr/share/applications/idafree.desktop
@@ -32,7 +32,7 @@ RUN set -ex; \
   apt-get install -y --no-install-recommends \
     git make cmake strace \
     gcc-multilib g++-multilib libc6-dev \
-    clangd clang-format qemu-system-i386 libgmp-dev libexpat-dev \
+    clangd clang-format qemu-system-i386 libgmp-dev libmpfr-dev libexpat-dev \
     nasm spim bison flex aircrack-ng airgraph-ng \
     netcat-traditional; \
   cd /; \
@@ -50,7 +50,7 @@ RUN set -ex; \
   tar xJf gdb-${GDB_VERSION}.tar.xz; \
   rm gdb-${GDB_VERSION}.tar.xz; \
   cd gdb-${GDB_VERSION}; \
-  ./configure --with-python=python3.10 --prefix=/usr/ --with-expat; \
+  ./configure --with-python=python3.13 --prefix=/usr/ --with-expat; \
   make -j $(nproc); \
   make install; \
   cd ..; \

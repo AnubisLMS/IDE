@@ -1,9 +1,9 @@
 # https://github.com/theia-ide/theia-apps/tree/master/theia-cpp-docker
 
-FROM debian:trixie-slim as base
+FROM debian:trixie-slim AS base
 
 ARG USER=anubis
-ARG DIST=bullseye
+ARG DIST=trixie
 ARG PY_VERSION=3.13.7
 
 ENV PY_VERSION=$PY_VERSION \
@@ -42,8 +42,8 @@ RUN set -ex; \
       apt-utils pkg-config curl lsb-release autoconf; \
     \
     `# Add LLVM to apt`  \
-    wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -; \
-    echo "deb http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST} main" \
+    wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | gpg --dearmor -o /usr/share/keyrings/llvm-keyring.gpg; \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/llvm-keyring.gpg] http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST} main" \
       > /etc/apt/sources.list.d/llvm.list; \
     \
     `# Add Docker to apt`  \
@@ -60,7 +60,7 @@ RUN set -ex; \
     \
     apt-get update; \
     apt-get install -y --no-install-recommends \
-      git curl wget build-essential tree clangd zsh exa locales zip unzip \
+      git curl wget build-essential tree clangd zsh eza locales zip unzip \
       libffi-dev libexpat1-dev \
       libgdbm-dev liblzma-dev zlib1g-dev \
       libsqlite3-dev libssl-dev openssl \
@@ -88,7 +88,6 @@ RUN set -ex; \
       --enable-option-checking=fatal \
       --enable-shared \
       --with-system-expat \
-      --with-system-ffi \
       --without-ensurepip; \
     make -j $(nproc) LDFLAGS="-Wl,--strip-all"; \
     make install; \
@@ -138,7 +137,7 @@ RUN set -ex; \
     chown anubis:anubis /log
 
 # Build Theia Application
-ARG CODE_SERVER_VERSION=4.20.0
+ARG CODE_SERVER_VERSION=4.103.2
 ARG CODE_SERVER_INDEX=/usr/lib/code-server/lib/vscode/out/vs/code/browser/workbench/workbench.html
 COPY config.yml /etc/anubis/config.yml
 COPY settings.json /opt/code-server/User/settings.json
@@ -153,11 +152,12 @@ RUN set -ex; \
     \
     `# Disable insecure warning`; \
     sed -i 's/window.isSecureContext||/false&&/' \
-      /usr/lib/code-server/lib/vscode/out/vs/workbench/workbench.web.main.js; \
+      /usr/lib/code-server/lib/vscode/out/vs/code/browser/workbench/workbench.js; \
     \
     `# Enable fontawesome css in CSP` \
     sed -i "s/style-src 'self' 'unsafe-inline'/style-src 'self' 'unsafe-inline' https:\/\/use.fontawesome.com/" \
-      /usr/lib/code-server/lib/vscode/out/vs/server/node/server.main.js; \
+      /usr/lib/code-server/lib/vscode/out/server-main.js \
+      /usr/lib/code-server/lib/vscode/out/vs/code/browser/workbench/workbench.js; \
     \
     `# Insert heartbeat script`; \
     SCRIPT_LINE='<script>function ping(){if (document.hasFocus()){fetch("/ide/ping")}};document.addEventListener("focus",ping);setInterval(ping,60000)</script>'; \
@@ -165,8 +165,8 @@ RUN set -ex; \
     sed -i "${HEAD_LINE_NUMBER}i${SCRIPT_LINE}" ${CODE_SERVER_INDEX}; \
     \
     `# Disable the insanely annoying bash shell integration`; \
-    sed -i '1ireturn' /usr/lib/code-server/lib/vscode/out/vs/workbench/contrib/terminal/browser/media/shellIntegration-bash.sh; \
-    sed -i '1isource ~/.bashrc' /usr/lib/code-server/lib/vscode/out/vs/workbench/contrib/terminal/browser/media/shellIntegration-bash.sh; \
+    sed -i '1ireturn' /usr/lib/code-server/lib/vscode/out/vs/workbench/contrib/terminal/common/scripts/shellIntegration-bash.sh; \
+    sed -i '1isource ~/.bashrc' /usr/lib/code-server/lib/vscode/out/vs/workbench/contrib/terminal/common/scripts/shellIntegration-bash.sh; \
     \
     `# Install Extensions`; \
     code-server --user-data-dir=/opt/code-server --install-extension ms-python.python; \
@@ -250,7 +250,7 @@ RUN set -eux; \
 COPY motd.txt /etc/motd
 COPY docker-entrypoint.sh supervisord.conf initialize-ide.py /
 
-ENV K9S_VERSION=v0.32.3 MINIKUBE_HOME=/minikube
+ENV K9S_VERSION=v0.50.9 MINIKUBE_HOME=/minikube
 
 RUN set -eux; \
     \

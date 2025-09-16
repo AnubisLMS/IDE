@@ -16,7 +16,7 @@ RUN set -eux; \
 FROM registry.digitalocean.com/anubis/theia-base:python-3.13 as theia
 
 ARG USER=anubis
-ARG GDB_VERSION=14.1
+ARG GDB_VERSION=16.3
 
 COPY --from=vsix /webfreak-debug.vsix /opt/code-server/webfreak-debug.vsix
 
@@ -53,6 +53,7 @@ RUN set -ex; \
   git clone https://github.com/pwndbg/pwndbg.git /opt/pwndbg; \
   cd /opt/pwndbg; \
   git submodule update --init --recursive; \
+  sed -i 's/"pt",//' pyproject.toml; \
   pip3 install --no-cache-dir -e /opt/pwndbg; \
   touch /opt/pwndbg/.skip-venv; \
   \

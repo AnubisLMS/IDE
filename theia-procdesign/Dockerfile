@@ -53,6 +53,7 @@ RUN set -ex; \
   git clone https://github.com/pwndbg/pwndbg.git /opt/pwndbg; \
   cd /opt/pwndbg; \
   git submodule update --init --recursive; \
+  sed -i 's/"pt",//' pyproject.toml; \
   pip3 install --no-cache-dir -e /opt/pwndbg; \
   rm -rf /tmp/*; \
   rm -rf /usr/share/doc; \

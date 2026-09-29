@@ -7,7 +7,7 @@ USER root
 RUN set -ex; \
   code-server --user-data-dir=/opt/code-server --install-extension golang.Go
 
-ENV GO_VERSION=1.21.0 \
+ENV GO_VERSION=1.27.1 \
   GOOS=linux \
   GOARCH=amd64 \
   GOROOT=/opt/go \
@@ -20,7 +20,8 @@ RUN set -ex; \
     cd /home/anubis; \
     mkdir -p $GOROOT; \
     mkdir -p $GOPATH; \
-    curl -fsSL https://storage.googleapis.com/golang/go$GO_VERSION.$GOOS-$GOARCH.tar.gz | tar -C $(dirname $GOROOT) -xzv; \
+    echo https://go.dev/dl/go$GO_VERSION.$GOOS-$GOARCH.tar.gz; \
+    curl -fsSL https://go.dev/dl/go$GO_VERSION.$GOOS-$GOARCH.tar.gz | tar -C $(dirname $GOROOT) -xzv; \
     cd /home/anubis; \
     go install github.com/uudashr/gopkgs/cmd/gopkgs@v2; \
     go install github.com/ramya-rao-a/go-outline@latest; \

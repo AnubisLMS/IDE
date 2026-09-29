@@ -1,0 +1,14 @@
+theia-golang/Dockerfile
+  h_b5fa7634886143 10,23-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "4cbed684f427e20b03947a67848b43556af70a02",
+  "prompts": {},
+  "humans": {
+    "h_b5fa7634886143": {
+      "author": "John McCann Cunniff Jr <johncunniff1248@gmail.com>"
+    }
+  }
+}
